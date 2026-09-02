@@ -1,0 +1,29 @@
+{
+  "category": "Common Student Misconceptions",
+  "misconceptions": [
+    {
+      "id": "misconc-001",
+      "concept": "Polymerisation",
+      "misconception": "Polystyrene has a constant relative molecular mass like a small molecule",
+      "why": "Students think polymers have fixed size like typical organic molecules",
+      "correction": "Addition polymerisation involves random chain termination. Chains stop growing at different times, so each polymer molecule has a different chain length and different Mᵣ",
+      "examTip": "Mark scheme always mentions 'range of' or 'variable' molecular mass for polymers"
+    },
+    {
+      "id": "misconc-002",
+      "concept": "Rate of Reaction",
+      "misconception": "Increasing temperature increases collision frequency, so reaction is faster",
+      "why": "Students only think about the kinetic theory part, not activation energy",
+      "correction": "Temperature mainly increases the fraction of molecules with energy ≥ Eₐ (activation energy). Collision frequency increase is small. More molecules reach Eₐ = much faster reaction",
+      "examTip": "Always mention 'greater proportion with E ≥ Eₐ' or 'more effective collisions'"
+    },
+    {
+      "id": "misconc-003",
+      "concept": "Electrolysis",
+      "misconception": "The anode is always negative",
+      "why": "Confusion between battery polarity and electrolysis cell polarity",
+      "correction": "In electrolysis: anode = positive (attracts anions), cathode = negative (attracts cations). This is opposite to a battery cell",
+      "examTip": "Watch the diagram carefully—follow the power supply connections, not memory"
+    }
+  ]
+}

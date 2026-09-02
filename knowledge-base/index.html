@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Base - DSE Chemistry</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        .nav-bar {
+            background-color: #3d4d5c;
+            padding: 15px 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .nav-bar ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .nav-bar a {
+            color: #ecf0f1;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        .nav-bar a:hover {
+            background-color: #4d5f6f;
+            transform: translateY(-2px);
+        }
+        .nav-bar a.active {
+            background-color: #27ae60;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+        }
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .page-header h1 {
+            color: #2c3e50;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .page-header p {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+        .knowledge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+        .knowledge-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border-left: 5px solid #27ae60;
+        }
+        .knowledge-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        .knowledge-card h3 {
+            color: #2c3e50;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+        .knowledge-card p {
+            color: #7f8c8d;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .knowledge-card a {
+            display: inline-block;
+            background-color: #27ae60;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        .knowledge-card a:hover {
+            background-color: #219653;
+        }
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #95a5a6;
+            border-top: 1px solid #ecf0f1;
+            margin-top: 60px;
+        }
+    </style>
+    <script src="../theme-manager.js" defer></script>
+</head>
+<body>
+
+<header class="navbar">
+    <div class="nav-group nav-left">
+        <a href="../dashboard/index.html" class="nav-logo">🧪 DSE Chem Hub</a>
+        <a href="../dashboard/index.html" class="nav-item">Home</a>
+    </div>
+
+    <div class="nav-group nav-center">
+        <a href="../simulations/index.html" class="nav-item">Simulations</a>
+        <a href="../ai-assistant/index.html" class="nav-item">AI Marking</a>
+        <a href="../qa-practice/index.html" class="nav-item">Quiz Generator</a>
+        <a href="../notes/index.html" class="nav-item">Notes</a>
+    </div>
+
+    <div class="nav-group nav-right">
+        <div class="settings-dropdown">
+            <button id="settingsBtn" class="settings-btn" type="button">⚙️ Settings</button>
+            <div id="settingsMenu" class="dropdown-content hidden">
+                <div class="theme-toggle"><span>Theme:</span><button id="lightThemeBtn" type="button" data-action="toggle-light">☀️ Light</button><button id="darkThemeBtn" type="button" data-action="toggle-dark">🌙 Dark</button></div>
+                <button id="helpBtn" class="dropdown-item" type="button" data-action="show-help">📚 Help & Support</button>
+                <button id="logoutBtn" class="dropdown-item danger" type="button" data-action="logout">🚪 Log Out</button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="page-header">
+        <h1>📚 DSE Chemistry Knowledge Base</h1>
+        <p>Core concepts, marking schemes, and common misconceptions</p>
+    </div>
+
+    <div class="knowledge-grid">
+        <div class="knowledge-card">
+            <h3>🧩 Concepts</h3>
+            <p>Essential chemistry concepts and theories across all DSE topics. Reference materials for fundamental understanding.</p>
+            <a href="./concepts/">Browse Concepts</a>
+        </div>
+
+        <div class="knowledge-card">
+            <h3>📋 Mark Schemes</h3>
+            <p>Official HKEAA marking schemes and assessment criteria. Learn what examiners expect in answers.</p>
+            <a href="./mark-schemes/">View Mark Schemes</a>
+        </div>
+
+        <div class="knowledge-card">
+            <h3>⚠️ Misconceptions</h3>
+            <p>Common student errors and misconceptions. Understand what NOT to do and why.</p>
+            <a href="./misconceptions/">Learn Common Errors</a>
+        </div>
+
+        <div class="knowledge-card">
+            <h3>❓ Question Types</h3>
+            <p>Different types of DSE chemistry questions with examples and strategies for each type.</p>
+            <a href="./question-types/">Explore Question Types</a>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2026 DSE Chemistry Learning Platform. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

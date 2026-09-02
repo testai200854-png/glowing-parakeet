@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | Integrated DSE Chemistry Laboratory Simulator</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <style>
+    .dashboard-shell {
+      background: #f6f9ff;
+      padding: 24px 32px 32px;
+      min-height: 100vh;
+    }
+
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      max-width: 1320px;
+      margin: 0 auto;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 24px;
+      align-self: start;
+      background: #ffffff;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 28px;
+      padding: 28px 22px;
+      box-shadow: 0 22px 50px rgba(15, 23, 42, 0.08);
+      min-height: calc(100vh - 72px);
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 28px;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #0f172a;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: #f8fafc;
+      color: #334155;
+      text-decoration: none;
+      font-weight: 600;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      font: inherit;
+    }
+
+    .nav-item:hover {
+      background: #eff6ff;
+      border-color: #dbeafe;
+      color: #0f172a;
+    }
+
+    .nav-item.active {
+      background: #f0f9ff;
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.22);
+      color: #0b69a3;
+    }
+
+    .dashboard-content {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .feature-panel {
+      display: none;
+    }
+
+    .feature-panel.active-panel {
+      display: block;
+    }
+
+    .content-hero {
+      background: #ffffff;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      border-radius: 30px;
+      padding: 32px 36px;
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.08);
+    }
+
+    .content-hero .eyebrow {
+      color: #0ea5e9;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .content-hero h1 {
+      font-size: clamp(2.1rem, 3vw, 3rem);
+      line-height: 1.05;
+      color: #0f172a;
+      margin-bottom: 18px;
+    }
+
+    .content-hero p {
+      max-width: 760px;
+      color: #475569;
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+
+    .content-cards {
+      display: grid;
+      gap: 20px;
+    }
+
+    .info-card {
+      background: #ffffff;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: 0 20px 46px rgba(15, 23, 42, 0.06);
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 16px;
+      background: #eff6ff;
+      margin-bottom: 16px;
+      font-size: 1.2rem;
+    }
+
+    .info-card h2 {
+      font-size: 1.15rem;
+      color: #0f172a;
+      margin-bottom: 14px;
+    }
+
+    .info-card ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 12px;
+      color: #475569;
+      line-height: 1.8;
+    }
+
+    .info-card li {
+      display: flex;
+      gap: 10px;
+    }
+
+    .info-card li::before {
+      content: '•';
+      color: #0ea5e9;
+      margin-left: -8px;
+    }
+
+    .distribution-table {
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+    }
+
+    .table-row {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 1.4fr;
+      gap: 14px;
+      padding: 14px 18px;
+      align-items: center;
+    }
+
+    .table-row.header {
+      background: #f8fafc;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .table-row:not(.header):nth-child(odd) {
+      background: #ffffff;
+    }
+
+    .table-row span {
+      color: #475569;
+    }
+
+    .checklist {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .check-col {
+      background: #f8fafc;
+      border-radius: 22px;
+      padding: 20px;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+    }
+
+    .check-col strong {
+      display: block;
+      margin-bottom: 12px;
+      font-size: 0.98rem;
+      color: #0f172a;
+    }
+
+    .check-col ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+      color: #475569;
+    }
+
+    .check-col li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .check-col li::before {
+      content: '✔';
+      color: #22c55e;
+      font-size: 0.85rem;
+      margin-left: -6px;
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: relative;
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+<body class="dashboard-page">
+  <!-- Universal Header Navigation -->
+  <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 16px 24px; margin: 20px 24px 24px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; max-width: 100%;">
+          <!-- App Title / Brand -->
+          <a href="./" style="text-decoration: none; color: #0f172a; font-weight: 700; font-size: 16px; display: flex; align-items: center; gap: 8px; margin: 0;">
+              <span>⚡</span> HKDSE Chem Lab
+          </a>
+
+          <!-- Action Controls -->
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+              <!-- User Greeting Pill -->
+              <span id="user-greeting" style="background: #eff6ff; color: #0f172a; border: none; padding: 10px 18px; border-radius: 999px; font-size: 14px; font-weight: 600;">
+                  Hi, Guest User
+              </span>
+
+              <!-- Navigation Buttons -->
+              <a href="./" class="nav-pill active" style="color: #fff; background-color: #3b82f6; text-decoration: none; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; border: 1px solid transparent; display: inline-flex; align-items: center; gap: 6px;">
+                  🏠 Home
+              </a>
+              <a href="../qa-practice/" class="nav-pill" style="color: #475569; text-decoration: none; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; border: 1px solid #d1d5db; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;">
+                  ⚡ QA Practice
+              </a>
+              <a href="../ai-assistant/" class="nav-pill" style="color: #475569; text-decoration: none; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; border: 1px solid #d1d5db; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;">
+                  🎯 AI Marking
+              </a>
+              <a href="../knowledge-base/" class="nav-pill" style="color: #475569; text-decoration: none; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; border: 1px solid #d1d5db; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;">
+                  📚 Knowledge Base
+              </a>
+
+              <!-- Log Out Button -->
+              <button onclick="handleLogout()" style="color: #dc2626; background-color: transparent; text-decoration: none; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; border: 1px solid #fecaca; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;">
+                  🚪 Log Out
+              </button>
+          </div>
+      </div>
+  </div>
+
+  <div class="app-shell dashboard-shell">
+    <div class="dashboard-layout">
+      <section class="dashboard-content">
+        <section id="panel-home" class="feature-panel active-panel">
+          <div class="content-hero">
+            <div class="eyebrow">HKDSE Chemistry Syllabus & Exam Structure</div>
+            <h1>Exam overview, paper distribution, and syllabus checklist at a glance.</h1>
+            <p>Reference the structure of Paper 1 and Paper 2 while keeping track of compulsory and elective topic coverage for HKDSE Chemistry.</p>
+          </div>
+
+          <div class="content-cards">
+            <article class="info-card">
+              <div class="card-icon">⏱️</div>
+              <h2>Exam Overview</h2>
+              <ul>
+                <li><strong>Paper 1 (Compulsory):</strong> 2.5 hours, 120 marks — Section A (MC, 36 marks) &amp; Section B (Structured, 84 marks). Weighting: 60%.</li>
+                <li><strong>Paper 2 (Elective):</strong> 1 hour, 40 marks — Structured questions on two elective topics. Weighting: 20%.</li>
+                <li><strong>SBA (School-based Assessment):</strong> Practical work performance. Weighting: 20%.</li>
+              </ul>
+            </article>
+
+            <article class="info-card">
+              <div class="card-icon">📊</div>
+              <h2>Paper Distribution</h2>
+              <div class="distribution-table">
+                <div class="table-row header"><span>Paper</span><span>Weighting</span><span>Focus</span></div>
+                <div class="table-row"><span>1A</span><span>MCQ</span><span>Compulsory core knowledge</span></div>
+                <div class="table-row"><span>1B</span><span>Structured</span><span>Compulsory concepts with short answers</span></div>
+                <div class="table-row"><span>2</span><span>Elective</span><span>Extended application across chosen modules</span></div>
+              </div>
+            </article>
+
+            <article class="info-card">
+              <div class="card-icon">📚</div>
+              <h2>HKDSE Syllabus Checklist</h2>
+              <div class="checklist">
+                <div class="check-col">
+                  <strong>📘 Compulsory Part</strong>
+                  <ul>
+                    <li>Topic 1: Planet Earth</li>
+                    <li>Topic 2: Microscopic World I</li>
+                    <li>Topic 3: Metals</li>
+                    <li>Topic 4: Acids and Bases</li>
+                    <li>Topic 5: Fossil Fuels and Carbon Compounds</li>
+                    <li>Topic 6: Microscopic World II</li>
+                    <li>Topic 7: Redox Reactions, Chemical Cells and Electrolysis</li>
+                    <li>Topic 8: Chemical Reactions and Energy</li>
+                    <li>Topic 9: Rate of Reaction</li>
+                    <li>Topic 10: Chemical Equilibrium</li>
+                    <li>Topic 11: Chemistry of Carbon Compounds</li>
+                    <li>Topic 12: Patterns in the Chemical World</li>
+                  </ul>
+                </div>
+                <div class="check-col">
+                  <strong>🧪 Elective Part (Choose 2)</strong>
+                  <ul>
+                    <li>Topic 13: Industrial Chemistry</li>
+                    <li>Topic 14: Materials Chemistry</li>
+                    <li>Topic 15: Analytical Chemistry</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="panel-simulations" class="feature-panel">
+          <div class="content-hero">
+            <div class="eyebrow">Interactive Learning</div>
+            <h1>Microscopic Animations</h1>
+            <p>Explore particle-level chemistry visuals and animated demonstrations to strengthen conceptual understanding.</p>
+          </div>
+          <div class="content-cards">
+            <article class="info-card">
+              <div class="card-icon">🔬</div>
+              <h2>Available features</h2>
+              <ul>
+                <li>Animated particle motion and reaction steps</li>
+                <li>Visual explanation for electrolysis and redox reactions</li>
+                <li>Quick comparison of bonding and molecular structures</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section id="panel-quiz" class="feature-panel">
+          <div class="content-hero">
+            <div class="eyebrow">Practice Mode</div>
+            <h1>HKDSE Types Quiz Generator</h1>
+            <p>Generate targeted chemistry questions by topic, difficulty, and question type for exam-style practice.</p>
+          </div>
+          <div class="content-cards">
+            <article class="info-card">
+              <div class="card-icon">⚡</div>
+              <h2>Quiz focus</h2>
+              <ul>
+                <li>Compulsory and elective topic filters</li>
+                <li>Timed practice sessions</li>
+                <li>Instant feedback and review support</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section id="panel-ai" class="feature-panel">
+          <div class="content-hero">
+            <div class="eyebrow">Smart Support</div>
+            <h1>AI Chemistry Tutor</h1>
+            <p>Get step-by-step help and explanations for difficult chemistry questions without leaving the dashboard.</p>
+          </div>
+          <div class="content-cards">
+            <article class="info-card">
+              <div class="card-icon">🤖</div>
+              <h2>Support options</h2>
+              <ul>
+                <li>Concept clarification and worked examples</li>
+                <li>Hint-based practice for problem solving</li>
+                <li>Personalised suggestions for revision focus</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section id="panel-notes" class="feature-panel">
+          <div class="content-hero">
+            <div class="eyebrow">Organisation</div>
+            <h1>Personal Note Record</h1>
+            <p>Keep summaries, formulas, and revision notes organised in one private workspace for quick review.</p>
+          </div>
+          <div class="content-cards">
+            <article class="info-card">
+              <div class="card-icon">📝</div>
+              <h2>Note categories</h2>
+              <ul>
+                <li>Key formulas and definitions</li>
+                <li>Topic summaries and weak points</li>
+                <li>Revision reminders and study plan checkpoints</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const homeButton = document.querySelector('.nav-item[data-panel="home"]');
+    const panels = document.querySelectorAll('.feature-panel');
+    const navItems = document.querySelectorAll('.nav-item');
+
+    if (homeButton) {
+      homeButton.addEventListener('click', () => {
+        navItems.forEach((item) => item.classList.remove('active'));
+        homeButton.classList.add('active');
+        panels.forEach((panel) => {
+          panel.classList.toggle('active-panel', panel.id === 'panel-home');
+        });
+      });
+    }
+  </script>
+
+  <script src="./auth-nav.js"></script>
+</body>
+</html>

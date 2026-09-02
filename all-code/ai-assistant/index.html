@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSE Chem AI 評卷助教 (Gemini)</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #34495e;
+        }
+        input[type="password"], input[type="number"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        button {
+            width: 100%;
+            background-color: #27ae60;
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #219653;
+        }
+        .result-box {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-left: 5px solid #27ae60;
+            border-radius: 4px;
+            min-height: 50px;
+            line-height: 1.6;
+        }
+        .api-note {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        .nav-bar {
+            background-color: #3d4d5c;
+            padding: 15px 20px;
+            margin: -20px -20px 30px -20px;
+            border-radius: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .nav-bar ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-bar li {
+            margin: 0;
+        }
+        .nav-bar a {
+            color: #ecf0f1;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            background-color: transparent;
+            border: 1px solid transparent;
+        }
+        .nav-bar a:hover {
+            background-color: #4d5f6f;
+            transform: translateY(-2px);
+        }
+        .nav-bar a.active {
+            background-color: #27ae60;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Universal Header Navigation -->
+<div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 16px 24px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; max-width: 100%;">
+        <!-- App Title / Brand -->
+        <a href="../index.html" style="text-decoration: none; color: #0f172a; font-weight: 700; font-size: 16px; display: flex; align-items: center; gap: 8px; margin: 0;">
+            <span>⚡</span> HKDSE Chem Lab
+        </a>
+
+        <!-- Action Controls -->
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <!-- User Greeting Pill -->
+            <span id="user-greeting" style="background: #eff6ff; color: #0f172a; border: none; padding: 10px 18px; border-radius: 999px; font-size: 14px; font-weight: 600;">
+                Hi, Guest User
+            </span>
+
+            <!-- Navigation Buttons -->
+            <a href="../dashboard/" class="nav-pill" style="color: #475569; text-decoration: none; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; border: 1px solid #d1d5db; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;">
+                🏠 Home
+            </a>
+            <a href="../qa-practice/" class="nav-pill" style="color: #475569; text-decoration: none; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; border: 1px solid #d1d5db; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;">
+                ❓ QA Practice
+            </a>
+            <a href="./" class="nav-pill active" style="color: #fff; background-color: #27ae60; text-decoration: none; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; border: 1px solid transparent; display: inline-flex; align-items: center; gap: 6px;">
+                🎯 AI Marking
+            </a>
+            <a href="../knowledge-base/" class="nav-pill" style="color: #475569; text-decoration: none; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; border: 1px solid #d1d5db; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;">
+                📚 Knowledge Base
+            </a>
+
+            <!-- Log Out Button -->
+            <button onclick="handleLogout()" style="color: #dc2626; background-color: transparent; text-decoration: none; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; border: 1px solid #fecaca; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;">
+                🚪 Log Out
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <h1>🧪 DSE Chem AI Smart Marking Assistant</h1>
+
+    <div class="chat-panel" style="max-width: 960px; margin: 0 auto; width: 100%;">
+        <div id="chat-container" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; min-height: 520px; max-height: 700px; overflow-y: auto;">
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <div style="background: #e8f8f0; color: #27ae60; padding: 10px 14px; border-radius: 4px 12px 12px 12px; font-size: 14px; max-width: 80%; line-height: 1.5;">
+                    🧠 <b>請輸入題目</b><br>例如：<span style="color:#1e293b;">Explain why sodium has a higher melting point than other metals.</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 18px; align-items: center;">
+            <input id="chat-user-input" type="text" placeholder="請輸入題目或答案..." style="flex: 1; padding: 15px 16px; border: 1px solid #d7e1ea; border-radius: 12px; font-size: 15px; min-height: 52px;" />
+            <button id="chat-send-btn" type="button" style="width: 150px; min-height: 52px; border-radius: 12px; font-size: 16px;">送出</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let chatStep = 0;
+    let currentSessionQuestion = "";
+    let currentSessionTargetMarks = null;
+    let currentSessionTopic = '';
+    let currentSessionPart = '';
+
+    try {
+        const pendingGrade = JSON.parse(sessionStorage.getItem('hkdsePendingGrade') || 'null');
+        if (pendingGrade?.question) {
+            currentSessionQuestion = pendingGrade.question;
+            currentSessionTargetMarks = pendingGrade.targetMarks;
+            currentSessionTopic = pendingGrade.topic || '';
+            currentSessionPart = pendingGrade.part || '';
+            sessionStorage.removeItem('hkdsePendingGrade');
+        }
+    } catch (error) {
+        console.warn('Unable to restore generated question:', error);
+    }
+
+    function renderMathInChat(container) {
+        if (typeof renderMathInElement === "function" && container) {
+            renderMathInElement(container, {
+                delimiters: [
+                    { left: '$$', right: '$$', display: true },
+                    { left: '$', right: '$', display: false }
+                ],
+                throwOnError: false,
+                errorColor: '#cc0000'
+            });
+        }
+    }
+
+    function showInlineNotice(message, type = 'info') {
+        const chatContainer = document.getElementById("chat-container");
+        if (!chatContainer) return;
+
+        const tone = type === 'error' ? '#fff5f5' : '#f0fdf4';
+        const border = type === 'error' ? '#ef4444' : '#22c55e';
+        const text = type === 'error' ? '#991b1b' : '#166534';
+
+        const notice = document.createElement('div');
+        notice.innerHTML = `
+            <div style="background:${tone}; border-left:4px solid ${border}; color:${text}; padding:12px 14px; border-radius:8px; margin:12px 0; font-size:14px; line-height:1.5;">
+                ${message}
+            </div>
+        `;
+        chatContainer.appendChild(notice);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    async function sendChatMessage() {
+        const inputField = document.getElementById("chat-user-input");
+        const chatContainer = document.getElementById("chat-container");
+
+        if (!inputField || !chatContainer) return;
+
+        const userText = inputField.value.trim();
+        if (!userText) return;
+
+        if (userText.length < 3) {
+            showInlineNotice('請輸入有效的題目或化學答案。', 'error');
+            return;
+        }
+
+        chatContainer.innerHTML += `
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 20px; align-items: flex-start; gap: 12px;">
+                <div style="background: #27ae60; color: #ffffff; padding: 14px 18px; border-radius: 16px 16px 2px 16px; font-size: 14.5px; max-width: 80%; line-height: 1.6; box-shadow: 0 4px 10px rgba(39,174,96,0.15);">
+                    ${userText}
+                </div>
+                <div style="background: #e2e8f0; color: #475569; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; flex-shrink: 0;">👤</div>
+            </div>
+        `;
+        renderMathInChat(chatContainer);
+        inputField.value = "";
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+        if (chatStep === 0) {
+            currentSessionQuestion = userText;
+            chatStep = 1;
+
+            chatContainer.innerHTML += `
+                <div style="display: flex; gap: 12px; margin-bottom: 20px; align-items: flex-start;">
+                    <div style="background: #27ae60; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; flex-shrink: 0;">🤖</div>
+                    <div style="background: #ffffff; color: #334155; padding: 14px 18px; border-radius: 2px 16px 16px 16px; font-size: 14.5px; max-width: 80%; line-height: 1.6; border: 1px solid #e2e8f0;">
+                        📝 <b>已成功鎖定題目！</b><br>現在請輸入您的<b>試答答案 (Your Answer)</b>，AI 將根據 HKDSE 化學標準進行深度批改。
+                    </div>
+                </div>
+            `;
+            renderMathInChat(chatContainer);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            return;
+        }
+
+        const studentAnswer = userText;
+        chatStep = 0;
+
+        const typingId = "typing_" + Date.now();
+        chatContainer.innerHTML += `
+            <div id="${typingId}" style="display: flex; gap: 12px; margin-bottom: 20px; align-items: flex-start;">
+                <div style="background: #27ae60; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; flex-shrink: 0;">🤖</div>
+                <div style="background: #ffffff; color: #64748b; padding: 14px 18px; border-radius: 2px 16px 16px 16px; font-size: 14px; border: 1px solid #e2e8f0; font-style: italic;">
+                    ⏳ AI 正在深度分析您的答案邏輯與化學關鍵字...
+                </div>
+            </div>
+        `;
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+        let aiReportHtml = "";
+
+        try {
+            const response = await fetch('/api/grade', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    question: currentSessionQuestion,
+                    answer: studentAnswer,
+                    targetMarks: currentSessionTargetMarks,
+                    topic: currentSessionTopic,
+                    part: currentSessionPart
+                })
+            });
+
+            const typingEl = document.getElementById(typingId);
+            if (typingEl) typingEl.remove();
+
+            if (!response.ok) {
+                throw new Error('無法連接 AI 服務器，請確認伺服器設定。');
+            }
+
+            const data = await response.json();
+            if (data.error) {
+                showInlineNotice('AI 服務暫時忙碌，系統已自動切換至備用資料模式。', 'info');
+                return;
+            }
+
+            // Handle Markdown response from AI
+            const rawResult = typeof data.result === 'string' ? data.result.trim() : '';
+            
+            // Configure marked to generate clean HTML
+            marked.setOptions({
+                breaks: true,
+                gfm: true,
+                headerIds: false
+            });
+            
+            // Parse and render Markdown with custom styling
+            let aiReportHtml = '';
+            if (rawResult) {
+                let htmlContent = marked.parse(rawResult);
+                
+                // Apply HKDSE-specific styling
+                htmlContent = htmlContent
+                    // Style headers with emoji
+                    .replace(/<h2>🎯\s+(.+?)<\/h2>/g, '<div style="margin: 16px 0 8px; font-weight: bold; color: #2563eb; font-size: 18px;">🎯 $1</div>')
+                    .replace(/<h2>📊\s+(.+?)<\/h2>/g, '<div style="margin: 16px 0 8px; font-weight: bold; color: #2563eb; font-size: 18px;">📊 $1</div>')
+                    .replace(/<h2>🔍\s+(.+?)<\/h2>/g, '<div style="margin: 16px 0 8px; font-weight: bold; color: #2563eb; font-size: 18px;">🔍 $1</div>')
+                    .replace(/<h2>📝\s+(.+?)<\/h2>/g, '<div style="margin: 16px 0 8px; font-weight: bold; color: #2563eb; font-size: 18px;">📝 $1</div>')
+                    .replace(/<h2>💡\s+(.+?)<\/h2>/g, '<div style="margin: 16px 0 8px; font-weight: bold; color: #2563eb; font-size: 18px;">💡 $1</div>')
+                    // Style lists
+                    .replace(/<ul>/g, '<ul style="margin: 8px 0; padding-left: 24px;">')
+                    .replace(/<li>/g, '<li style="margin: 6px 0; line-height: 1.6;">')
+                    // Style final score section
+                    .replace(/分數\s*:\s*(.+?)(?=<|$)/g, '<div style="background: #f0fdf4; padding: 12px 16px; border-radius: 8px; border-left: 4px solid #22c55e; margin-top: 16px; font-weight: 700; color: #166534;">分數 : $1</div>')
+                    // Reduce paragraph margins
+                    .replace(/<p>/g, '<p style="margin: 8px 0; line-height: 1.6;">')
+                    // Remove <br> at end of content
+                    .replace(/<br>\s*$/g, '');
+                
+                aiReportHtml = htmlContent;
+            } else {
+                aiReportHtml = '<p style="color: #ef4444;">AI 沒有回傳可顯示的批改內容。</p>';
+            }
+        } catch (error) {
+            const typingEl = document.getElementById(typingId);
+            if (typingEl) typingEl.remove();
+
+            aiReportHtml = `
+                <div style="background: #fff5f5; border-left: 4px solid #ef4444; padding: 12px; border-radius: 6px; color: #991b1b; font-size: 14px;">
+                    <b>⚠️ 批改服務暫時無法運作：</b><br>${error.message}
+                </div>
+            `;
+        }
+
+        // Store raw markdown result for saving
+        const reportMarkdown = rawResult;
+        const reportId = 'save-report-' + Date.now();
+
+        chatContainer.innerHTML += `
+            <div style="display: flex; gap: 12px; margin-bottom: 20px; align-items: flex-start;">
+                <div style="background: #27ae60; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; flex-shrink: 0;">🤖</div>
+                <div style="background: #ffffff; color: #1e293b; padding: 16px 20px; border-radius: 2px 16px 16px 16px; font-size: 14.5px; max-width: 85%; line-height: 1.6; border: 1px solid #e2e8f0;">
+                    🎯 <b>DSE AI 批改報告：</b><br><br>
+                    ${aiReportHtml}
+                    <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e2e8f0; display: flex; gap: 8px;">
+                        <button id="${reportId}" class="save-to-notes-btn" style="background: #27ae60; color: white; padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">
+                            💾 Save to Notes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Attach event listener to save button
+        const saveBtn = document.getElementById(reportId);
+        if (saveBtn) {
+            saveBtn.addEventListener('click', function() {
+                saveToNotes(
+                    currentSessionTopic,
+                    currentSessionPart,
+                    currentSessionQuestion,
+                    studentAnswer,
+                    reportMarkdown
+                );
+            });
+        }
+
+        renderMathInChat(chatContainer);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const chatInput = document.getElementById("chat-user-input");
+        const sendBtn = document.getElementById("chat-send-btn");
+
+        if (chatInput) {
+            chatInput.addEventListener("keydown", function (event) {
+                if (event.key === "Enter") {
+                    sendChatMessage();
+                }
+            });
+        }
+
+        if (sendBtn) {
+            sendBtn.addEventListener("click", sendChatMessage);
+        }
+    });
+
+    // Save complete AI feedback to Notes
+    function saveToNotes(topic, part, question, answer, aiResponse) {
+        try {
+            // Get existing notes from localStorage
+            const existingNotes = JSON.parse(localStorage.getItem('dse_chem_notes') || '[]');
+            
+            // Create note object with all data
+            const newNote = {
+                id: Date.now(),
+                topic: topic || 'Ch1-4 Planet Earth',
+                part: part || 'General',
+                timestamp: new Date().toISOString().split('T')[0],
+                question: question,
+                answer: answer,
+                aiResponse: aiResponse  // Full AI markdown response
+            };
+            
+            // Add to array
+            existingNotes.unshift(newNote);
+            
+            // Save to localStorage
+            localStorage.setItem('dse_chem_notes', JSON.stringify(existingNotes));
+            localStorage.setItem('dse-notes', JSON.stringify(existingNotes)); // Also store in dse-notes for compatibility
+            
+            // Show success message
+            showInlineNotice('✅ 成功保存至 Notes 頁面！您可前往 📖 Notes 檢視完整記錄。', 'info');
+        } catch (error) {
+            console.error('Error saving to Notes:', error);
+            showInlineNotice('❌ 保存失敗，請重試。', 'error');
+        }
+    }
+
+</script>
+
+<script src="../auth-nav.js"></script>
+</body>
+</html>

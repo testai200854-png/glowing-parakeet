@@ -1,0 +1,17 @@
+{
+  "name": "hh-chemistry-ai-grader",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Node.js / Express backend for HKDSE chemistry AI grading",
+  "main": "server.js",
+  "scripts": {
+    "start": "node start.js",
+    "dev": "node start.js"
+  },
+  "dependencies": {
+    "@google/genai": "^2.17.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.22.2"
+  }
+}

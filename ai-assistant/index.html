@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSE Chem AI 評卷助教 (Gemini)</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #34495e;
+        }
+        input[type="password"], input[type="number"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        button {
+            width: 100%;
+            background-color: #27ae60;
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #219653;
+        }
+        .result-box {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-left: 5px solid #27ae60;
+            border-radius: 4px;
+            min-height: 50px;
+            line-height: 1.6;
+        }
+        .api-note {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        .nav-bar {
+            background-color: #3d4d5c;
+            padding: 15px 20px;
+            margin: -20px -20px 30px -20px;
+            border-radius: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .nav-bar ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-bar li {
+            margin: 0;
+        }
+        .nav-bar a {
+            color: #ecf0f1;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            background-color: transparent;
+            border: 1px solid transparent;
+        }
+        .nav-bar a:hover {
+            background-color: #4d5f6f;
+            transform: translateY(-2px);
+        }
+        .nav-bar a.active {
+            background-color: #27ae60;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+        }
+    </style>
+    <script src="../theme-manager.js" defer></script>
+</head>
+<body>
+
+<header class="navbar">
+    <div class="nav-group nav-left">
+        <a href="../dashboard/index.html" class="nav-logo">🧪 DSE Chem Hub</a>
+        <a href="../dashboard/index.html" class="nav-item">Home</a>
+    </div>
+
+    <div class="nav-group nav-center">
+        <a href="../simulations/index.html" class="nav-item">Simulations</a>
+        <a href="../ai-assistant/index.html" class="nav-item active">AI Marking</a>
+        <a href="../qa-practice/index.html" class="nav-item">Quiz Generator</a>
+        <a href="../notes/index.html" class="nav-item">Notes</a>
+    </div>
+
+    <div class="nav-group nav-right">
+        <div class="settings-dropdown">
+            <button id="settingsBtn" class="settings-btn" type="button">⚙️ Settings</button>
+            <div id="settingsMenu" class="dropdown-content hidden">
+                <div class="theme-toggle"><span>Theme:</span><button id="lightThemeBtn" type="button" data-action="toggle-light">☀️ Light</button><button id="darkThemeBtn" type="button" data-action="toggle-dark">🌙 Dark</button></div>
+                <button id="helpBtn" class="dropdown-item" type="button" data-action="show-help">📚 Help & Support</button>
+                <button id="logoutBtn" class="dropdown-item danger" type="button" data-action="logout">🚪 Log Out</button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <h1>🧪 DSE Chem AI Smart Marking Assistant</h1>
+
+    <div class="chat-panel" style="max-width: 960px; margin: 0 auto; width: 100%;">
+        <div id="chat-container" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; min-height: 520px; max-height: 700px; overflow-y: auto;">
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <div style="background: #e8f8f0; color: #27ae60; padding: 10px 14px; border-radius: 4px 12px 12px 12px; font-size: 14px; max-width: 80%; line-height: 1.5;">
+                    🧠 <b>請輸入題目</b><br>例如：<span style="color:#1e293b;">Explain why sodium has a higher melting point than other metals.</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 18px; align-items: center;">
+            <input id="chat-user-input" type="text" placeholder="請輸入題目或答案..." style="flex: 1; padding: 15px 16px; border: 1px solid #d7e1ea; border-radius: 12px; font-size: 15px; min-height: 52px;" />
+            <button id="chat-send-btn" type="button" style="width: 150px; min-height: 52px; border-radius: 12px; font-size: 16px;">送出</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let chatStep = 0;
+    let currentSessionQuestion = "";
+    let currentSessionTargetMarks = null;
+    let currentSessionTopic = '';
+    let currentSessionPart = '';
+
+    try {
+        const pendingGrade = JSON.parse(sessionStorage.getItem('hkdsePendingGrade') || 'null');
+        if (pendingGrade?.question) {
+            currentSessionQuestion = pendingGrade.question;
+            currentSessionTargetMarks = pendingGrade.targetMarks;
+            currentSessionTopic = pendingGrade.topic || '';
+            currentSessionPart = pendingGrade.part || '';
+            sessionStorage.removeItem('hkdsePendingGrade');
+        }
+    } catch (error) {
+        console.warn('Unable to restore generated question:', error);
+    }
+
+    function renderMathInChat(container) {
+        if (typeof renderMathInElement === "function" && container) {
+            renderMathInElement(container, {
+                delimiters: [
+                    { left: '$$', right: '$$', display: true },
+                    { left: '$', right: '$', display: false }
+                ],
+                throwOnError: false,
+                errorColor: '#cc0000'
+            });
+        }
+    }
+
+    function showInlineNotice(message, type = 'info') {
+        const chatContainer = document.getElementById("chat-container");
+        if (!chatContainer) return;
+
+        const tone = type === 'error' ? '#fff5f5' : '#f0fdf4';
+        const border = type === 'error' ? '#ef4444' : '#22c55e';
+        const text = type === 'error' ? '#991b1b' : '#166534';
+
+        const notice = document.createElement('div');
+        notice.innerHTML = `
+            <div style="background:${tone}; border-left:4px solid ${border}; color:${text}; padding:12px 14px; border-radius:8px; margin:12px 0; font-size:14px; line-height:1.5;">
+                ${message}
+            </div>
+        `;
+        chatContainer.appendChild(notice);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    async function sendChatMessage() {
+        const inputField = document.getElementById("chat-user-input");
+        const chatContainer = document.getElementById("chat-container");
+
+        if (!inputField || !chatContainer) return;
+
+        const userText = inputField.value.trim();
+        if (!userText) return;
+
+        if (userText.length < 3) {
+            showInlineNotice('請輸入有效的題目或化學答案。', 'error');
+            return;
+        }
+
+        chatContainer.innerHTML += `
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 20px; align-items: flex-start; gap: 12px;">
+                <div style="background: #27ae60; color: #ffffff; padding: 14px 18px; border-radius: 16px 16px 2px 16px; font-size: 14.5px; max-width: 80%; line-height: 1.6; box-shadow: 0 4px 10px rgba(39,174,96,0.15);">
+                    ${userText}
+                </div>
+                <div style="background: #e2e8f0; color: #475569; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; flex-shrink: 0;">👤</div>
+            </div>
+        `;
+        inputField.value = "";
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+        if (chatStep === 0) {
+            currentSessionQuestion = userText;
+            chatStep = 1;
+
+            chatContainer.innerHTML += `
+                <div style="display: flex; gap: 12px; margin-bottom: 20px; align-items: flex-start;">
+                    <div style="background: #27ae60; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; flex-shrink: 0;">🤖</div>
+                    <div style="background: #ffffff; color: #334155; padding: 14px 18px; border-radius: 2px 16px 16px 16px; font-size: 14.5px; max-width: 80%; line-height: 1.6; border: 1px solid #e2e8f0;">
+                        📝 <b>已成功鎖定題目！</b><br>現在請輸入您的<b>試答答案 (Your Answer)</b>，AI 將根據 HKDSE 化學標準進行深度批改。
+                    </div>
+                </div>
+            `;
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            return;
+        }
+
+        const studentAnswer = userText;
+        chatStep = 0;
+
+        const typingId = "typing_" + Date.now();
+        chatContainer.innerHTML += `
+            <div id="${typingId}" style="display: flex; gap: 12px; margin-bottom: 20px; align-items: flex-start;">
+                <div style="background: #27ae60; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; flex-shrink: 0;">🤖</div>
+                <div style="background: #ffffff; color: #64748b; padding: 14px 18px; border-radius: 2px 16px 16px 16px; font-size: 14px; border: 1px solid #e2e8f0; font-style: italic;">
+                    ⏳ AI 正在深度分析您的答案邏輯與化學關鍵字...
+                </div>
+            </div>
+        `;
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+        let aiReportHtml = "";
+        let data = null;
+
+        try {
+            const response = await fetch('/api/grade', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    question: currentSessionQuestion,
+                    answer: studentAnswer,
+                    targetMarks: currentSessionTargetMarks,
+                    topic: currentSessionTopic,
+                    part: currentSessionPart
+                })
+            });
+
+            const typingEl = document.getElementById(typingId);
+            if (typingEl) typingEl.remove();
+
+            if (!response.ok) {
+                throw new Error('無法連接 AI 服務器，請確認伺服器設定。');
+            }
+
+            data = await response.json();
+            if (data.error && !data.result) {
+                showInlineNotice('AI 服務暫時忙碌，系統已自動切換至備用資料模式。', 'info');
+                return;
+            }
+
+            // Parse data.result if it's a JSON string
+            let parsedResult = {};
+            try {
+                if (typeof data.result === 'string' && data.result.trim().startsWith('{')) {
+                    parsedResult = JSON.parse(data.result);
+                } else if (typeof data.result === 'object') {
+                    parsedResult = data.result;
+                }
+            } catch (parseError) {
+                console.warn('Cannot parse result as JSON, treating as plain text:', parseError);
+            }
+
+            const escapeHtml = (value) => String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+
+            const renderMarkdown = (value) => escapeHtml(value)
+                .replace(/&amp;lt;/gi, '&lt;')
+                .replace(/&amp;gt;/gi, '&gt;')
+                .replace(/&amp;quot;/gi, '&quot;')
+                .replace(/&lt;(\/?)p&gt;/gi, '<$1p>')
+                .replace(/&lt;(\/?)ul&gt;/gi, '<$1ul>')
+                .replace(/&lt;(\/?)li&gt;/gi, '<$1li>')
+                .replace(/&lt;span style=&quot;color:\s*(green|#008000|#16a34a|#22c55e);?&quot;&gt;([\s\S]*?)&lt;\/span&gt;/gi, '<span style="color: $1;">$2</span>')
+                .replace(/&lt;strong style=&quot;color: #3b82f6;&quot;&gt;/gi, '<strong style="color: #3b82f6;">')
+                .replace(/&lt;(\/?)strong&gt;/gi, '<$1strong>')
+                .replace(/&lt;(\/?)b&gt;/gi, '<$1strong>')
+                .replace(/&lt;(\/?)u&gt;/gi, '<$1u>')
+                .replace(/<p>/gi, '<div style="margin: 0 0 8px 0;">')
+                .replace(/<\/p>/gi, '</div>')
+                .replace(/<ul>/gi, '<ul style="margin: 0 0 10px 0; padding-left: 20px;">')
+                .replace(/&lt;div style=&quot;background-color:#e8f5e9; padding:10px; border-radius:8px; margin-top:10px; font-weight:bold; color:#2e7d32;&quot;&gt;([\s\S]*?)&lt;\/div&gt;/gi, '<div style="background-color:#e8f5e9; padding:10px; border-radius:8px; margin-top:10px; font-weight:bold; color:#2e7d32;">$1</div>')
+                .replace(/&lt;\/?u&gt;/gi, '')
+                .replace(/text-decoration:\s*underline;?/gi, '')
+                .replace(/&lt;div style=&quot;background-color: #e8f5e9; border-left: 4px solid #2e7d32; padding: 8px 12px; border-radius: 6px; margin-top: 8px; font-weight: bold; font-size: 15px; color: #1b5e20;&quot;&gt;([\s\S]*?)&lt;\/div&gt;/gi, '<div style="background-color: #e8f5e9; border-left: 4px solid #2e7d32; padding: 8px 12px; border-radius: 6px; margin-top: 8px; font-weight: bold; font-size: 15px; color: #1b5e20;">$1</div>')
+                .replace(/^(🎯|📊|🔍|📝|💡)\s+\*\*(.+?)\*\*$/gm, '<p><strong style="color: #3b82f6;">$1 $2</strong></p>')
+                .replace(/^分數\s*:\s*([^\n]+)$/gm, '<div style="background: #f0fdf4; padding: 12px; border-radius: 8px; border-left: 4px solid #22c55e; margin-top: 12px; font-weight: 700; color: #166534;">分數 : $1</div>')
+                .replace(/^### (.+)$/gm, '<h6>$1</h6>')
+                .replace(/^## (.+)$/gm, '<h5>$1</h5>')
+                .replace(/^# (.+)$/gm, '<h4>$1</h4>')
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/^[•*-] (.+)$/gm, '<div>• $1</div>')
+                .replace(/\n/g, '<br>');
+
+            const rawResult = typeof data.result === 'string' ? data.result.trim() : '';
+            const hasStructuredResult = Object.values(parsedResult).some(value => value !== undefined && value !== null && value !== '');
+
+            // Build formatted HTML from parsed result, or render the raw Markdown response.
+            const formatSection = (title, content) => {
+                if (!content) return '';
+                const formatted = Array.isArray(content)
+                    ? content.map(item => `<div>• ${renderMarkdown(item)}</div>`).join('')
+                    : renderMarkdown(content);
+                return `<div style="margin-bottom: 16px;">
+                    <h6 style="margin: 0 0 8px 0; color: #2563eb; font-weight: 700;">${title}</h6>
+                    <div style="margin-left: 8px;">${formatted}</div>
+                </div>`;
+            };
+
+            aiReportHtml = `
+                <div style="background: #ffffff; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; line-height: 1.6;">
+                    ${hasStructuredResult ? formatSection('🎯 整體評語', parsedResult.overallComments || '') : renderMarkdown(rawResult || 'AI 沒有回傳可顯示的批改內容。')}
+                    ${hasStructuredResult ? formatSection('🔍 詳細分析', parsedResult.detailedAnalysis || '') : ''}
+                    ${hasStructuredResult ? formatSection('📝 參考答案', parsedResult.modelAnswer || '') : ''}
+                    ${hasStructuredResult ? formatSection('💡 考生建議', parsedResult.advice || '') : ''}
+                    ${parsedResult.score ? `<div style="background: #f0fdf4; padding: 12px; border-radius: 6px; border-left: 4px solid #22c55e; margin-top: 12px;"><strong>分數：${escapeHtml(parsedResult.score)}</strong></div>` : ''}
+                </div>
+            `;
+        } catch (error) {
+            const typingEl = document.getElementById(typingId);
+            if (typingEl) typingEl.remove();
+
+            aiReportHtml = `
+                <div style="background: #fff5f5; border-left: 4px solid #ef4444; padding: 12px; border-radius: 6px; color: #991b1b; font-size: 14px;">
+                    <b>⚠️ 批改服務暫時無法運作：</b><br>${error.message}
+                </div>
+            `;
+        }
+
+        chatContainer.innerHTML += `
+            <div style="display: flex; gap: 12px; margin-bottom: 20px; align-items: flex-start;">
+                <div style="background: #27ae60; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; flex-shrink: 0;">🤖</div>
+                <div style="background: #ffffff; color: #1e293b; padding: 16px 20px; border-radius: 2px 16px 16px 16px; font-size: 14.5px; max-width: 85%; line-height: 1.6; border: 1px solid #e2e8f0;">
+                    🎯 <b>DSE AI 批改報告：</b><br><br>
+                    ${aiReportHtml}
+                </div>
+            </div>
+        `;
+
+        renderMathInChat(chatContainer);
+
+        try {
+            const detectedTopic = (data && data.topic) || "All Chapters & Topics";
+            const detectedPart = (data && data.part) || "All Parts";
+
+            const autoSavedNote = {
+                id: "note_" + Date.now(),
+                chapter: detectedTopic,
+                topic: detectedTopic,
+                part: detectedPart,
+                question: currentSessionQuestion,
+                answer: studentAnswer,
+                report: typeof data.result === 'string' && data.result.trim().startsWith('{') 
+                    ? JSON.stringify(parsedResult) 
+                    : (data && data.result ? data.result : ""),
+                content: aiReportHtml,
+                timestamp: new Date().toISOString(),
+                createdAt: new Date().toLocaleString()
+            };
+
+            const storageKeys = ["dse_chem_notes", "chemistry_notes", "dse_saved_notes"];
+            const merged = [];
+            storageKeys.forEach((key) => {
+                try {
+                    const parsed = JSON.parse(localStorage.getItem(key) || "[]");
+                    if (Array.isArray(parsed)) merged.push(...parsed);
+                } catch (error) {
+                    // ignore malformed storage entries
+                }
+            });
+            const unique = Array.from(new Map((merged || []).map(note => [note.id || `${note.question}_${note.timestamp}`, note])).values());
+            unique.push(autoSavedNote);
+
+            storageKeys.forEach((key) => localStorage.setItem(key, JSON.stringify(unique)));
+
+            if (typeof renderSavedNotes === "function") {
+                renderSavedNotes();
+            }
+        } catch (error) {
+            console.warn("自動儲存失敗:", error);
+        }
+
+        chatContainer.innerHTML += `
+            <div style="display: flex; gap: 12px; margin-bottom: 20px; align-items: flex-start;">
+                <div style="background: #ffffff; color: #64748b; padding: 10px 14px; border-radius: 4px 12px 12px 12px; font-size: 13.5px; max-width: 80%; border:1px dashed #cbd5e1;">
+                    🔄 紀錄已自動同步至 Notes 頁面。您可以繼續輸入下一題題目！
+                </div>
+            </div>
+        `;
+
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const chatInput = document.getElementById("chat-user-input");
+        const sendBtn = document.getElementById("chat-send-btn");
+
+        if (chatInput) {
+            chatInput.addEventListener("keydown", function (event) {
+                if (event.key === "Enter") {
+                    sendChatMessage();
+                }
+            });
+        }
+
+        if (sendBtn) {
+            sendBtn.addEventListener("click", sendChatMessage);
+        }
+    });
+</script>
+
+</body>
+</html>

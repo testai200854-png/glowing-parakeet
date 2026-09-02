@@ -1,0 +1,16 @@
+{
+  "questionType": "MCQ (Paper 1A)",
+  "scaffolding": [
+    {
+      "type": "mcq-factual",
+      "description": "Straightforward recall of definition or property",
+      "hint": "Look for the definition directly in your notes or textbook",
+      "approach": [
+        "Identify what the question is asking for",
+        "Eliminate obviously wrong options (distractors)",
+        "Match with your knowledge",
+        "Check if answer makes logical sense"
+      ]
+    }
+  ]
+}

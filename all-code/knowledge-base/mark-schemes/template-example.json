@@ -1,0 +1,25 @@
+{
+  "topic": "Ch1-4 Planet Earth",
+  "chapter": "Atmosphere",
+  "questions": [
+    {
+      "id": "q001",
+      "question": "Explain why UV light speeds up substitution reactions. (2 marks)",
+      "marks": 2,
+      "modelAnswer": [
+        "UV light breaks C-H bonds (or provides energy to break bonds) [1]",
+        "This produces free radicals which are highly reactive species that initiate the chain reaction [1]"
+      ],
+      "keyPoints": [
+        "Photodissociation of molecules",
+        "Formation of free radicals",
+        "Radical-chain mechanism"
+      ],
+      "commonMistakes": [
+        "Saying UV increases collision frequency (incorrect—collision frequency stays same, reactivity increases)",
+        "Not mentioning free radicals",
+        "Confusing initiation step with propagation"
+      ]
+    }
+  ]
+}

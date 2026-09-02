@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>⚡ HKDSE Types Quiz Generator</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <style>
+    .qa-page-shell {
+      background: #f8fafc;
+    }
+
+    .qa-page-shell .top-nav {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.05);
+      padding: 18px 24px;
+    }
+
+    .qa-page-shell .brand {
+      color: #111827;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .qa-page-shell .top-action-btn,
+    .qa-page-shell .profile-pill {
+      min-height: 44px;
+      padding: 10px 16px;
+      border-radius: 999px;
+    }
+
+    .qa-page-shell .profile-pill {
+      background: #eff6ff;
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .qa-page-shell .panel-card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 32px;
+      padding: 30px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.05);
+    }
+
+    .qa-page-shell .page-title h2 {
+      font-size: clamp(2rem, 2.4vw, 2.8rem);
+      margin: 12px 0 0;
+      color: #111827;
+    }
+
+    .qa-page-shell .page-intro {
+      margin-top: 14px;
+      color: #475569;
+      line-height: 1.75;
+      max-width: 760px;
+    }
+
+    .qa-page-shell .quiz-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+
+    .qa-page-shell .pill-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .qa-page-shell .pill-button {
+      background: #ffffff;
+      color: #111827;
+      border: 1px solid #e5e7eb;
+      border-radius: 999px;
+      padding: 12px 18px;
+      min-width: 170px;
+      font-weight: 700;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+      transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+    }
+
+    .qa-page-shell .pill-button:hover,
+    .qa-page-shell .pill-button.active {
+      background: #eef2ff;
+      border-color: #c7d2fe;
+      color: #3730a3;
+      transform: translateY(-1px);
+    }
+
+    .qa-page-shell .primary-btn {
+      background: #0ea5e9;
+      color: #ffffff;
+      border-color: transparent;
+    }
+
+    .qa-page-shell .secondary-btn {
+      background: #ffffff;
+      color: #0f172a;
+      border-color: #d1d5db;
+    }
+
+    .qa-page-shell .secondary-btn:hover {
+      background: #f8fafc;
+    }
+
+    .qa-page-shell .progress-panel {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .qa-page-shell .progress-pill {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 999px;
+      padding: 12px 16px;
+      font-weight: 700;
+      color: #0f172a;
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.05);
+    }
+
+    .qa-page-shell .filter-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+
+    /* 新增：簡化篩選區域樣式 */
+    .qa-page-shell .simplified-filter-section {
+      margin-bottom: 26px;
+    }
+
+    .qa-page-shell .core-filters {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 14px;
+      align-items: flex-end;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+    }
+
+    .qa-page-shell .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .qa-page-shell .filter-group label {
+      font-weight: 700;
+      color: #334155;
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .qa-page-shell .filter-group select {
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: #111827;
+      font-size: 14px;
+    }
+
+    .qa-page-shell .toggle-advanced {
+      background: transparent;
+      color: #0f172a;
+      border: 1px solid #d1d5db;
+      padding: 12px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .qa-page-shell .toggle-advanced:hover {
+      background: #f8fafc;
+      border-color: #9ca3af;
+    }
+
+    /* 進階篩選面板 */
+    .qa-page-shell .advanced-filters-panel {
+      display: none;
+      background: #f8fafc;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      border-top: none;
+      margin-top: -1px;
+    }
+
+    .qa-page-shell .advanced-filters-panel.visible {
+      display: block;
+    }
+
+    .qa-page-shell .advanced-filters-panel.hidden {
+      display: none;
+    }
+
+    .qa-page-shell .advanced-filter-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .qa-page-shell label {
+      display: grid;
+      gap: 10px;
+      color: #334155;
+      font-weight: 700;
+    }
+
+    .qa-page-shell select {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: #111827;
+      appearance: none;
+    }
+
+    .qa-page-shell .quiz-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .qa-page-shell .quiz-card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 26px;
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.05);
+    }
+
+    .qa-page-shell .card-header {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .qa-page-shell .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .qa-page-shell .tag-pill,
+    .qa-page-shell .question-badge,
+    .qa-page-shell .mark-pill {
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .qa-page-shell .question-badge { background: #eef2ff; color: #4338ca; }
+    .qa-page-shell .mark-pill { background: #ecfdf5; color: #027a48; }
+    .qa-page-shell .tag-pill { background: #f8fafc; color: #475569; border: 1px solid #e5e7eb; }
+
+    .qa-page-shell .detail-toggle {
+      background: #eff6ff;
+      color: #4338ca;
+      border: 1px solid #c7d2fe;
+    }
+
+    .qa-page-shell .detail-box {
+      display: none;
+      padding: 18px;
+      border-radius: 22px;
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      color: #334155;
+      line-height: 1.75;
+    }
+
+    .qa-page-shell .detail-box.visible {
+      display: block;
+    }
+
+    @media (max-width: 980px) {
+      .qa-page-shell .quiz-toolbar,
+      .qa-page-shell .progress-panel,
+      .qa-page-shell .filter-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .qa-page-shell .filter-row {
+        grid-template-columns: 1fr;
+      }
+
+      .qa-page-shell .core-filters {
+        grid-template-columns: 1fr;
+      }
+
+      .qa-page-shell .advanced-filter-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .qa-page-shell .advanced-filter-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell qa-page-shell">
+    <header class="top-nav">
+      <!-- Universal Header Navigation -->
+      <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 16px 24px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; max-width: 100%;">
+              <!-- App Title / Brand -->
+              <a href="../dashboard/" style="text-decoration: none; color: #0f172a; font-weight: 700; font-size: 16px; display: flex; align-items: center; gap: 8px; margin: 0;">
+                  <span>⚡</span> HKDSE Chem Lab
+              </a>
+
+              <!-- Action Controls -->
+              <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                  <!-- User Greeting Pill -->
+                  <span id="user-greeting" style="background: #eff6ff; color: #0f172a; border: none; padding: 10px 18px; border-radius: 999px; font-size: 14px; font-weight: 600;">
+                      Hi, Guest User
+                  </span>
+
+                  <!-- Navigation Buttons -->
+                  <a href="../dashboard/" class="nav-pill" style="color: #475569; text-decoration: none; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; border: 1px solid #d1d5db; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;">
+                      🏠 Home
+                  </a>
+                  <a href="./" class="nav-pill active" style="color: #fff; background-color: #0ea5e9; text-decoration: none; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; border: 1px solid transparent; display: inline-flex; align-items: center; gap: 6px;">
+                      ⚡ QA Practice
+                  </a>
+                  <a href="../ai-assistant/" class="nav-pill" style="color: #475569; text-decoration: none; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; border: 1px solid #d1d5db; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;">
+                      🎯 AI Marking
+                  </a>
+                  <a href="../knowledge-base/" class="nav-pill" style="color: #475569; text-decoration: none; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; border: 1px solid #d1d5db; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;">
+                      📚 Knowledge Base
+                  </a>
+
+                  <!-- Log Out Button -->
+                  <button onclick="handleLogout()" style="color: #dc2626; background-color: transparent; text-decoration: none; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; border: 1px solid #fecaca; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;">
+                      🚪 Log Out
+                  </button>
+              </div>
+          </div>
+      </div>
+    </header>
+
+    <section class="panel-card">
+      <div class="page-header">
+        <div class="page-title">
+          <div class="eyebrow">Exam-style revision</div>
+          <h2>⚡ HKDSE Types Quiz Generator</h2>
+          <p class="page-intro">Generate authentic Hong Kong DSE Chemistry questions aligned to the actual Paper 1A, Paper 1B, Paper 2, and compulsory/elective syllabus patterns used in the HKDSE assessment.</p>
+        </div>
+      </div>
+
+      <div class="quiz-toolbar">
+        <div class="progress-panel">
+          <button id="generate-quiz-btn" type="button" class="pill-button primary-btn" onclick="handleQuizGeneration()">⚡ Generate new quiz</button>
+          <button type="button" class="pill-button secondary-btn" onclick="generateQuizFromNotes()">📝 From saved notes</button>
+        </div>
+      </div>
+
+      <div class="simplified-filter-section">
+        <!-- 核心選單區 (只顯示 Chapter 和 Paper Mode) -->
+        <div class="core-filters">
+          <div class="filter-group">
+            <label>🎯 Chapter / Topic</label>
+            <select id="chapterFilter" onchange="handleChapterChanged()"></select>
+          </div>
+          <div class="filter-group">
+            <label>📄 Paper Mode</label>
+            <select id="paperModeFilter" onchange="applyFilters()">
+              <option value="all">All paper modes</option>
+              <option value="Paper 1A">Paper 1A (MCQ)</option>
+              <option value="Paper 1B">Paper 1B (Structured response)</option>
+              <option value="Paper 2">Paper 2 (Elective / extended response)</option>
+              <option value="Practical">Practical / Lab / Data-based</option>
+            </select>
+          </div>
+          <button class="toggle-advanced" type="button" onclick="toggleAdvancedFilters()">
+            ⚙️ More Options
+          </button>
+        </div>
+
+        <!-- 進階篩選面板 (摺疊) -->
+        <div class="advanced-filters-panel hidden" id="advancedFilters">
+          <div class="advanced-filter-row">
+            <div class="filter-group">
+              <label>
+                📌 Part
+                <select id="partFilter" onchange="applyFilters()"></select>
+              </label>
+            </div>
+            <div class="filter-group">
+              <label>
+                🎚️ Difficulty Level
+                <select id="difficultyFilter" onchange="applyFilters()">
+                  <option value="all">All levels</option>
+                  <option value="Basic">Basic</option>
+                  <option value="Standard">Standard</option>
+                  <option value="Challenging">Challenging</option>
+                </select>
+              </label>
+            </div>
+            <div class="filter-group">
+              <label>
+                🧮 Marks
+                <select id="quiz-marks-select" onchange="applyFilters()">
+                  <option value="all">All marks</option>
+                  <option value="1">1 Mark (Definitions/Observations)</option>
+                  <option value="2">2 Marks (Short Explanations)</option>
+                  <option value="3">3 Marks (Comparative Structures)</option>
+                  <option value="4">4 Marks (Calculations/Syntheses)</option>
+                  <option value="5">5 Marks (Structured Essays)</option>
+                  <option value="6">6 Marks (Extended Experimental Designs)</option>
+                </select>
+              </label>
+            </div>
+            <div class="filter-group">
+              <label>
+                📘 Syllabus Pattern
+                <select id="syllabusPatternFilter" onchange="applyFilters()">
+                  <option value="all">All patterns</option>
+                  <option value="Compulsory">Compulsory part</option>
+                  <option value="Elective">Elective part</option>
+                </select>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quiz-grid" id="quizGrid">
+        <article class="quiz-card" data-type="mcq" data-topic="Ch14-19 Acids and Bases" data-part="Part 1: Introduction to Acids, Alkalis & pH Scale" data-difficulty="Standard" data-marks="4" data-paper="Paper 1A">
+          <div class="card-header">
+            <span class="question-badge">Q1</span>
+            <span class="mark-pill">4 marks</span>
+          </div>
+          <h3>Which conjugate base is produced when HCl dissolves in water?</h3>
+          <div class="tag-row">
+            <span class="tag-pill">General MCQ</span>
+            <span class="tag-pill">Ch14-19 Acids and Bases</span>
+            <span class="tag-pill">MCQ pattern</span>
+          </div>
+          <div class="card-actions">
+            <button class="detail-toggle" data-open-label="Hide Marking Scheme" data-closed-label="Show Marking Scheme" onclick="toggleDetail(this, 'scheme1')">Show Marking Scheme</button>
+            <button class="detail-toggle" data-open-label="Hide Common Mistakes" data-closed-label="View Common Mistakes" onclick="toggleDetail(this, 'mistakes1')">View Common Mistakes</button>
+          </div>
+          <div id="scheme1" class="detail-box">The correct answer is Cl⁻ because HCl donates a proton to water, leaving the chloride ion as its conjugate base.</div>
+          <div id="mistakes1" class="detail-box">Common mistake: confusing the conjugate base with H₂O or writing H₃O⁺ instead of Cl⁻.</div>
+        </article>
+
+        <article class="quiz-card" data-type="short" data-topic="Ch20-22 Fossil Fuels & Carbon Compounds" data-part="Part 2: Homologous Series, Alkanes & Alkenes" data-difficulty="Standard" data-marks="6" data-paper="Paper 1B">
+          <div class="card-header">
+            <span class="question-badge">Q2</span>
+            <span class="mark-pill">6 marks</span>
+          </div>
+          <h3>Explain why the C=C bond in ethene is more reactive than the C–C bond in ethane.</h3>
+          <div class="tag-row">
+            <span class="tag-pill">Structural</span>
+            <span class="tag-pill">Ch20-22 Fossil Fuels & Carbon Compounds</span>
+            <span class="tag-pill">Short response</span>
+          </div>
+          <div class="card-actions">
+            <button class="detail-toggle" data-open-label="Hide Marking Scheme" data-closed-label="Show Marking Scheme" onclick="toggleDetail(this, 'scheme2')">Show Marking Scheme</button>
+            <button class="detail-toggle" data-open-label="Hide Common Mistakes" data-closed-label="View Common Mistakes" onclick="toggleDetail(this, 'mistakes2')">View Common Mistakes</button>
+          </div>
+          <div id="scheme2" class="detail-box">Mention the π bond in ethene; it has higher electron density and is easier to attack than the σ bond in ethane.</div>
+          <div id="mistakes2" class="detail-box">Common mistake: stating only bond length or strength without distinguishing σ and π bond character.</div>
+        </article>
+
+        <article class="quiz-card" data-type="essay" data-topic="Ch10-13 Metals" data-part="Part 2: Extraction Methods & Mole Calculations" data-difficulty="Challenging" data-marks="10" data-paper="Paper 2">
+          <div class="card-header">
+            <span class="question-badge">Q3</span>
+            <span class="mark-pill">10 marks</span>
+          </div>
+          <h3>Describe how limiting reagent and percentage yield are used to evaluate reaction efficiency in industrial chemistry.</h3>
+          <div class="tag-row">
+            <span class="tag-pill">Essay practice</span>
+            <span class="tag-pill">Ch10-13 Metals</span>
+            <span class="tag-pill">Essay</span>
+          </div>
+          <div class="card-actions">
+            <button class="detail-toggle" data-open-label="Hide Marking Scheme" data-closed-label="Show Marking Scheme" onclick="toggleDetail(this, 'scheme3')">Show Marking Scheme</button>
+            <button class="detail-toggle" data-open-label="Hide Common Mistakes" data-closed-label="View Common Mistakes" onclick="toggleDetail(this, 'mistakes3')">View Common Mistakes</button>
+          </div>
+          <div id="scheme3" class="detail-box">Cover definitions of limiting reagent, calculation of actual yield from stoichiometry, and use of percentage yield to compare efficiency.</div>
+          <div id="mistakes3" class="detail-box">Common mistake: failing to identify the limiting reagent or using the theoretical yield instead of actual yield in percentage yield calculations.</div>
+        </article>
+
+        <article class="quiz-card" data-type="practical" data-topic="Ch14-19 Acids and Bases" data-part="Part 3: Volumetric Analysis & Titration Stoichiometry" data-difficulty="Basic" data-marks="5" data-paper="Practical">
+          <div class="card-header">
+            <span class="question-badge">Q4</span>
+            <span class="mark-pill">5 marks</span>
+          </div>
+          <h3>Outline the procedure for preparing a standard solution by titration and state one key control variable.</h3>
+          <div class="tag-row">
+            <span class="tag-pill">Practical</span>
+            <span class="tag-pill">Ch14-19 Acids and Bases</span>
+            <span class="tag-pill">Short response</span>
+          </div>
+          <div class="card-actions">
+            <button class="detail-toggle" data-open-label="Hide Marking Scheme" data-closed-label="Show Marking Scheme" onclick="toggleDetail(this, 'scheme4')">Show Marking Scheme</button>
+            <button class="detail-toggle" data-open-label="Hide Common Mistakes" data-closed-label="View Common Mistakes" onclick="toggleDetail(this, 'mistakes4')">View Common Mistakes</button>
+          </div>
+          <div id="scheme4" class="detail-box">Include rinsing the burette, precise volume readings, and control of the titre until the end-point is reached.</div>
+          <div id="mistakes4" class="detail-box">Common mistake: not describing the need to rinse equipment or not identifying the control variable such as temperature or concentration.</div>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    let quizCards = [];
+    let knowledgeQuizLoaded = false;
+    const questionCount = document.getElementById('questionCount');
+    const chapterFilter = document.getElementById('chapterFilter');
+    const partFilter = document.getElementById('partFilter');
+    const paperModeFilter = document.getElementById('paperModeFilter');
+    const syllabusPatternFilter = document.getElementById('syllabusPatternFilter');
+    const difficultyFilter = document.getElementById('difficultyFilter');
+    const marksSelect = document.getElementById('quiz-marks-select');
+    let quizGenerationCooldown = null;
+
+    // 摺疊進階篩選面板
+    function toggleAdvancedFilters() {
+      const panel = document.getElementById('advancedFilters');
+      if (panel) {
+        panel.classList.toggle('hidden');
+        panel.classList.toggle('visible');
+      }
+    }
+
+    function setQuizButtonState(disabled, label) {
+      const button = document.getElementById('generate-quiz-btn');
+      if (!button) return;
+      button.disabled = disabled;
+      button.textContent = label;
+      button.style.opacity = disabled ? '0.7' : '1';
+      button.style.cursor = disabled ? 'not-allowed' : 'pointer';
+    }
+
+    async function handleQuizGeneration() {
+      const button = document.getElementById('generate-quiz-btn');
+      if (!button || button.disabled) return;
+
+      setQuizButtonState(true, 'Generating HKDSE Question...');
+
+      try {
+        await generateQuiz();
+      } catch (error) {
+        console.error('Quiz generation guarded error:', error);
+      } finally {
+        if (quizGenerationCooldown) {
+          clearTimeout(quizGenerationCooldown);
+        }
+        quizGenerationCooldown = setTimeout(() => {
+          setQuizButtonState(false, 'Generate new quiz');
+        }, 3000);
+      }
+    }
+
+    function buildQuizPrompt(paperType = 'Paper 1A', topic = 'Ch14-19 Acids and Bases', marks = 3, syllabusPattern = 'Compulsory') {
+      return `You are an elite chief item setter for the Hong Kong HKEAA HKDSE Chemistry Public Examination.
+Generate one authentic HKDSE Chemistry question aligned to the actual assessment style and syllabus blueprint.
+
+Exam Blueprint:
+- Paper Component: ${paperType}
+- Syllabus Pattern: ${syllabusPattern}
+- Syllabus Topic Focus: ${topic}
+- Target Question Marks: ${marks} marks
+
+Strict DSE Item Setting Rules:
+1. QUESTION LANGUAGE: Use authentic HKDSE phrasing such as "State...", "Explain...", "Describe and explain...", "Calculate...", "Outline a procedure...", and "Suggest...".
+2. PAPER ALIGNMENT: Match the expected style of the chosen paper. Paper 1A should be concise, objective, and concept-driven; Paper 1B should be structured and analytical; Paper 2 should be extended, application-based, and elective-oriented; practical questions should emphasise observations, procedures, apparatus, and data interpretation.
+3. SYLLABUS ALIGNMENT: Keep the question within the ${syllabusPattern} part of the HKDSE Chemistry curriculum and references should be valid for the chosen topic.
+4. MARKING SYSTEM: The answer key must contain EXACTLY ${marks} distinct marking points, and each point must be worth exactly 1 mark, labeled as [1M].
+5. DSE-STYLE SUPPORT: Include Traditional Chinese explanations for each marking point and a realistic student misconception for this topic.
+
+Output format (strict HTML; no intro or filler text):
+<div style="border-bottom: 2px solid #27ae60; padding-bottom: 8px; margin-bottom: 15px;">
+    <span style="background: #27ae60; color: #fff; padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-right: 8px;">${paperType}</span>
+    <b style="color: #2c3e50; font-size:14px;">${syllabusPattern} · ${topic} (Target: ${marks} Marks)</b>
+</div>
+
+<div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+    <b style="color:#0f172a; display:block; margin-bottom:5px;">Question:</b>
+    <p style="font-size: 14.5px; color: #334155; font-family: 'Times New Roman', Times, serif; margin:0; line-height:1.6;">
+        [Generate a realistic HKDSE Chemistry question here] <b>(${marks} marks)</b>
+    </p>
+</div>
+
+<div style="background: #ffffff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.01);">
+    <b style="color:#16a34a; display:block; margin-bottom:8px;">📜 HKEAA Official Marking Scheme (評卷參考):</b>
+    <ul style="font-size: 14px; color: #334155; line-height: 1.7; padding-left:15px; margin:0;">
+        <li>• [Point 1 in correct DSE English] <span style="color:#2563eb; font-weight:bold;">[1M]</span><br><small style="color:#64748b;">(中文解析：此得分點的關鍵概念及表述要求)</small></li>
+    </ul>
+    <div style="margin-top: 12px; background: #fffbeb; padding: 10px; border-radius:4px; color:#b45309; font-size:12.5px; border-left:3px solid #f59e0b;">
+        <b>⚠️ 考生常犯錯誤 (Common Mistakes):</b> [Give a realistic DSE student mistake for this topic in Traditional Chinese]
+    </div>
+</div>`;
+    }
+
+    const syllabusTopics = {
+      'Ch1-4 Planet Earth': {
+        pattern: 'Compulsory',
+        parts: [
+          'Part 0: Introduction to Chemistry',
+          'Part 1: Atmosphere',
+          'Part 2: Ocean',
+          'Part 3: Crust'
+        ]
+      },
+      'Ch5-9 Microscopic World I': {
+        pattern: 'Compulsory',
+        parts: [
+          'Part 1: Atomic Structure, Isotopes & Periodic Trends',
+          'Part 2: Chemical Bonding & Octet Rule',
+          'Part 3: Structures and Properties of Substances'
+        ]
+      },
+      'Ch10-13 Metals': {
+        pattern: 'Compulsory',
+        parts: [
+          'Part 1: Reactivity Series of Metals & Displacement',
+          'Part 2: Extraction Methods & Mole Calculations',
+          'Part 3: Corrosion of Metals & Protection Methods'
+        ]
+      },
+      'Ch14-19 Acids and Bases': {
+        pattern: 'Compulsory',
+        parts: [
+          'Part 1: Introduction to Acids, Alkalis & pH Scale',
+          'Part 2: Indicators, Neutralization & Salt Preparation',
+          'Part 3: Volumetric Analysis & Titration Stoichiometry'
+        ]
+      },
+      'Ch20-22 Fossil Fuels & Carbon Compounds': {
+        pattern: 'Compulsory',
+        parts: [
+          'Part 1: Sources of Hydrocarbons & Fractional Distillation',
+          'Part 2: Homologous Series, Alkanes & Alkenes',
+          'Part 3: Addition Polymers, Plastics & Pollution',
+          'Part 4 : Addition Polymerization'
+        ]
+      },
+      'Ch23-25 Microscopic World II': {
+        pattern: 'Compulsory',
+        parts: [
+          'Part 1: Shapes of Molecules & VSEPR Theory',
+          'Part 2: Bond Polarity & Electronegativity',
+          'Part 3: Intermolecular Forces & Hydrogen Bonding'
+        ]
+      },
+      'Ch26-29 Redox Reactions, Chemical Cells & Electrolysis': {
+        pattern: 'Compulsory',
+        parts: [
+          'Part 1: Oxidation Numbers & Balancing Redox Equations',
+          'Part 2: Chemical Cells & Electrochemical Series',
+          'Part 3: Electrolysis, Electroplating & Industrial Applications'
+        ]
+      },
+      'Ch30-32 Chemical Reactions & Energy': {
+        pattern: 'Compulsory',
+        parts: [
+          'Part 1: Exothermic & Endothermic Enthalpy Changes',
+          'Part 2: Calorimetry & Enthalpy Determination',
+          'Part 3: Hess\'s Law & Enthalpy Cycles'
+        ]
+      },
+      'Ch33-35 Rate of Reaction': {
+        pattern: 'Compulsory',
+        parts: [
+          'Part 1: Reaction Rate Monitoring Methods',
+          'Part 2: Factors Affecting Rate & Collision Theory',
+          'Part 3: Catalysts & Activation Energy'
+        ]
+      }
+    };
+
+    const typeLabels = {
+      mcq: 'MC Questions (Paper 1A)',
+      short: 'Short Questions (Structural)',
+      essay: 'Explanation / Essay Questions (Paper 1B)',
+      practical: 'Practical & Lab Questions'
+    };
+
+    function refreshQuizCards() {
+      quizCards = Array.from(document.getElementById('quizGrid').querySelectorAll('.quiz-card'));
+    }
+
+    function mapTemplateToQuizPlacement(templateKey) {
+      switch (templateKey) {
+        case 'part1_atmosphere': return { topic: 'Ch1-4 Planet Earth', part: 'Part 1: Atmosphere' };
+        case 'part2_ocean': return { topic: 'Ch1-4 Planet Earth', part: 'Part 2: Ocean' };
+        case 'part3_crust': return { topic: 'Ch1-4 Planet Earth', part: 'Part 3: Crust' };
+        case 'part1_metalsAndOres': return { topic: 'Ch10-13 Metals', part: 'Part 2: Extraction Methods & Mole Calculations' };
+        case 'part2_reactivitiesOfMetals': return { topic: 'Ch10-13 Metals', part: 'Part 1: Reactivity Series of Metals & Displacement' };
+        case 'part3_reactionMassAndMole': return { topic: 'Ch10-13 Metals', part: 'Part 2: Extraction Methods & Mole Calculations' };
+        case 'part4_metalCorrosion': return { topic: 'Ch10-13 Metals', part: 'Part 3: Corrosion of Metals & Protection Methods' };
+        case 'acid': return { topic: 'Ch14-19 Acids and Bases', part: 'Part 1: Introduction to Acids, Alkalis & pH Scale' };
+        case 'rate': return { topic: 'Ch33-35 Rate of Reaction', part: 'Part 2: Factors Affecting Rate & Collision Theory' };
+        case 'redox': return { topic: 'Ch26-29 Redox Reactions, Chemical Cells & Electrolysis', part: 'Part 1: Oxidation Numbers & Balancing Redox Equations' };
+        case 'electrolysis': return { topic: 'Ch26-29 Redox Reactions, Chemical Cells & Electrolysis', part: 'Part 3: Electrolysis, Electroplating & Industrial Applications' };
+        case 'bond': return { topic: 'Ch23-25 Microscopic World II', part: 'Part 2: Bond Polarity & Electronegativity' };
+        default: return { topic: 'Ch1-4 Planet Earth', part: 'Part 1: Atmosphere' };
+      }
+    }
+
+    function buildKnowledgeBaseCards(answerTemplates) {
+      const cards = [];
+      const entries = Object.entries(answerTemplates || {}).filter(([key]) => key !== 'default');
+      const chosenEntries = entries.slice(0, 6);
+
+      chosenEntries.forEach(([templateKey, template], index) => {
+        const placement = mapTemplateToQuizPlacement(templateKey);
+        const qaPairs = Array.isArray(template && template.qaPairs) ? template.qaPairs : [];
+        const firstPair = qaPairs[0] || null;
+        const questionText = firstPair ? firstPair.q : (template && template.name ? `Explain the concept of ${template.name}.` : 'Explain the key idea from the knowledge base.');
+        const answerText = firstPair ? (firstPair.answer || '') : (template && Array.isArray(template.definitions) && template.definitions[0] ? template.definitions[0].definition : '');
+        const questionType = firstPair && firstPair.marks && firstPair.marks >= 8 ? 'essay' : firstPair && firstPair.marks && firstPair.marks >= 4 ? 'short' : 'mcq';
+        const difficulty = questionType === 'essay' ? 'Challenging' : questionType === 'short' ? 'Standard' : 'Basic';
+        const schemeId = `knowledge-scheme-${index}`;
+        const mistakesId = `knowledge-mistakes-${index}`;
+        const card = document.createElement('article');
+        card.className = 'quiz-card';
+        card.dataset.type = questionType;
+        card.dataset.topic = placement.topic;
+        card.dataset.part = placement.part;
+        card.dataset.difficulty = difficulty;
+        card.innerHTML = `
+          <div class="card-header">
+            <span class="question-badge">Q${index + 10}</span>
+            <span class="mark-pill">${firstPair && firstPair.marks ? `${firstPair.marks} marks` : '4 marks'}</span>
+          </div>
+          <h3>${questionText}</h3>
+          <div class="tag-row">
+            <span class="tag-pill">Knowledge Base</span>
+            <span class="tag-pill">${placement.topic}</span>
+            <span class="tag-pill">${questionType === 'mcq' ? 'General MCQ' : questionType === 'short' ? 'Short-answer' : 'Essay practice'}</span>
+          </div>
+          <div class="card-actions">
+            <button class="detail-toggle" data-open-label="Hide Marking Scheme" data-closed-label="Show Marking Scheme" onclick="toggleDetail(this, '${schemeId}')">Show Marking Scheme</button>
+            <button class="detail-toggle" data-open-label="Hide Common Mistakes" data-closed-label="View Common Mistakes" onclick="toggleDetail(this, '${mistakesId}')">View Common Mistakes</button>
+          </div>
+          <div id="${schemeId}" class="detail-box">${answerText}</div>
+          <div id="${mistakesId}" class="detail-box">Common mistake: giving a vague answer without naming the key concept, evidence, or final conclusion.</div>
+        `;
+        cards.push(card);
+      });
+      return cards;
+    }
+
+    function loadKnowledgeBaseQuiz() {
+      if (knowledgeQuizLoaded) return Promise.resolve();
+      return fetch('../knowledge-base/answer-templates.json')
+        .then((res) => res.json())
+        .catch(() => ({}))
+        .then((data) => {
+          const cards = buildKnowledgeBaseCards(data);
+          if (cards.length) {
+            const parent = document.getElementById('quizGrid');
+            cards.forEach((card) => parent.appendChild(card));
+            refreshQuizCards();
+            applyFilters();
+          }
+          knowledgeQuizLoaded = true;
+        });
+    }
+
+    function populateChapterSelect() {
+      const chapters = ['All chapters', ...Object.keys(syllabusTopics)];
+      chapterFilter.innerHTML = chapters
+        .map(chapter => `<option value="${chapter}">${chapter}</option>`)
+        .join('');
+      populatePartSelect('All chapters');
+    }
+
+    function populatePartSelect(chapter) {
+      const chapterMeta = chapter === 'All chapters' ? null : syllabusTopics[chapter];
+      const parts = chapter === 'All chapters'
+        ? ['All parts']
+        : ['All parts', ...(chapterMeta ? chapterMeta.parts : [])];
+      partFilter.innerHTML = parts
+        .map(part => `<option value="${part}">${part}</option>`)
+        .join('');
+      partFilter.disabled = chapter === 'All chapters';
+    }
+
+    function handleChapterChanged() {
+      const selected = chapterFilter.value;
+      populatePartSelect(selected);
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const chapter = chapterFilter.value;
+      const part = partFilter.value;
+      const selectedPaper = paperModeFilter.value;
+      const selectedPattern = syllabusPatternFilter.value;
+      const difficulty = difficultyFilter.value;
+      const selectedMarks = marksSelect ? marksSelect.value : 'all';
+      let visibleCount = 0;
+      quizCards.forEach(card => {
+        const chapterInfo = syllabusTopics[card.dataset.topic];
+        const chapterPattern = chapterInfo ? chapterInfo.pattern : 'Compulsory';
+        const matchesChapter = chapter === 'All chapters' || card.dataset.topic === chapter;
+        const matchesPart = part === 'All parts' || card.dataset.part === part;
+        const matchesPaper = selectedPaper === 'all' || card.dataset.paper === selectedPaper || !card.dataset.paper;
+        const matchesPattern = selectedPattern === 'all' || chapterPattern === selectedPattern;
+        const matchesDifficulty = difficulty === 'all' || card.dataset.difficulty === difficulty;
+        const selectedMarkValue = Number(selectedMarks);
+        const matchesMarks = selectedMarks === 'all' || Number(card.dataset.marks || 0) === selectedMarkValue;
+        const visible = matchesChapter && matchesPart && matchesPaper && matchesPattern && matchesDifficulty && matchesMarks;
+        card.style.display = visible ? 'flex' : 'none';
+        if (visible) visibleCount += 1;
+      });
+    }
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function generateQuiz() {
+      const startTime = performance.now();
+      const parent = document.getElementById('quizGrid');
+      refreshQuizCards();
+      const shuffled = shuffleArray([...quizCards]);
+      parent.innerHTML = '';
+      shuffled.forEach(card => parent.appendChild(card));
+      refreshQuizCards();
+      applyFilters();
+    }
+
+    function createNoteQuizCards(notes) {
+      const cards = notes.map((note, index) => {
+        const queryText = note.query || note.question || '';
+        const questionType = queryText.length > 120 ? 'essay' : queryText.length > 70 ? 'short' : 'mcq';
+        const questionMark = questionType === 'essay' ? '10 marks' : questionType === 'short' ? '6 marks' : '4 marks';
+        const schemeId = `scheme-note-${index}`;
+        const mistakesId = `mistakes-note-${index}`;
+        const questionText = queryText || 'AI-generated question from saved note';
+        const schemeText = Array.isArray(note.showFlat)
+          ? note.showFlat.join(' ')
+          : (typeof note.showFlat === 'string' ? note.showFlat : (Array.isArray(note.focusSummary) ? note.focusSummary.join(' ') : 'Use the material to structure an answer clearly.'));
+        const mistakesText = note.showFact || 'Avoid vague wording and keep the answer tied to the material.';
+
+        const card = document.createElement('article');
+        card.className = 'quiz-card';
+        card.dataset.type = questionType;
+        card.dataset.topic = note.topic || 'Saved AI note';
+        card.dataset.part = note.part || 'Unassigned part';
+        card.dataset.difficulty = questionType === 'essay' ? 'Challenging' : 'Standard';
+        card.innerHTML = `
+          <div class="card-header">
+            <span class="question-badge">Q${index + 1}</span>
+            <span class="mark-pill">${questionMark}</span>
+          </div>
+          <h3>${questionText}</h3>
+          <div class="tag-row">
+            <span class="tag-pill">AI Note</span>
+            <span class="tag-pill">${card.dataset.topic}</span>
+            <span class="tag-pill">${questionType === 'mcq' ? 'General MCQ' : questionType === 'short' ? 'Short-answer' : 'Essay practice'}</span>
+          </div>
+          <div class="card-actions">
+            <button class="detail-toggle" data-open-label="Hide Marking Scheme" data-closed-label="Show Marking Scheme" onclick="toggleDetail(this, '${schemeId}')">Show Marking Scheme</button>
+            <button class="detail-toggle" data-open-label="Hide Common Mistakes" data-closed-label="View Common Mistakes" onclick="toggleDetail(this, '${mistakesId}')">View Common Mistakes</button>
+          </div>
+          <div id="${schemeId}" class="detail-box">${schemeText}</div>
+          <div id="${mistakesId}" class="detail-box">${mistakesText}</div>
+        `;
+        return card;
+      });
+      return cards;
+    }
+
+    function generateQuizFromNotes() {
+      const saved = JSON.parse(localStorage.getItem('dse-notes') || '[]');
+      if (!saved.length) {
+        alert('No saved AI notes available. Save a note from the AI assistant first.');
+        return;
+      }
+      const parent = document.getElementById('quizGrid');
+      parent.innerHTML = '';
+      const cards = createNoteQuizCards(saved);
+      cards.forEach(card => parent.appendChild(card));
+      applyFilters();
+      const elapsed = ((performance.now() - window.quizGenerateStart) / 1000).toFixed(2);
+      generateTime.textContent = `Generated from saved notes in ${elapsed}s`;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      populateChapterSelect();
+      refreshQuizCards();
+      loadKnowledgeBaseQuiz().finally(() => {
+        refreshQuizCards();
+        applyFilters();
+        window.quizGenerateStart = performance.now();
+      });
+    });
+  </script>
+
+  <script src="../auth-nav.js"></script>
+</body>
+</html>

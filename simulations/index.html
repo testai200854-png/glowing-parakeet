@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microscopic Animations - HKDSE Chemistry</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background:
+        radial-gradient(circle at top, rgba(14, 116, 144, 0.22), transparent 36%),
+        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.18), transparent 32%),
+        linear-gradient(180deg, #020817 0%, #0f172a 100%);
+      color: #e2e8f0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .navbar {
+      width: 100%;
+      max-width: 1100px;
+      background: rgba(15, 23, 42, 0.62);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 18px;
+      padding: 14px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 12px 35px rgba(2, 6, 23, 0.38), inset 0 1px 0 rgba(255,255,255,0.08);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      margin-bottom: 24px;
+    }
+    .nav-brand { font-weight: 700; font-size: 19px; color: #f8fafc; }
+    .nav-links { display: flex; gap: 24px; align-items: center; }
+    .nav-links a { color: rgba(191, 219, 254, 0.86); text-decoration: none; font-weight: 500; font-size: 14px; transition: all 0.2s ease; }
+    .nav-links a:hover, .nav-links a.active { color: #7dd3fc; font-weight: 600; text-shadow: 0 0 10px rgba(125, 211, 252, 0.5); }
+    .nav-actions { display: flex; gap: 12px; align-items: center; }
+    .btn-nav {
+      padding: 8px 18px; border-radius: 20px; border: 1px solid rgba(148, 163, 184, 0.28);
+      background: rgba(255,255,255,0.04); color: #e2e8f0; font-weight: 600; font-size: 13px;
+      cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+      transition: all 0.2s ease;
+    }
+    .btn-nav:hover { background: rgba(125, 211, 252, 0.08); border-color: rgba(125, 211, 252, 0.5); transform: translateY(-1px); }
+
+    .container { width: 100%; max-width: 1100px; }
+    .page-title { font-size: 26px; font-weight: 800; margin-bottom: 6px; color: #f8fafc; text-shadow: 0 0 12px rgba(125, 211, 252, 0.2); }
+    .page-desc { color: #bae6fd; font-size: 14px; margin-bottom: 24px; }
+
+    .grid-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .card {
+      background: rgba(15, 23, 42, 0.46);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 16px; padding: 18px;
+      cursor: pointer; transition: all 0.25s ease; display: flex; flex-direction: column; justify-content: space-between;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 12px 25px rgba(2,6,23,0.17);
+    }
+    .card:hover { border-color: rgba(125, 211, 252, 0.7); transform: translateY(-2px); box-shadow: 0 18px 30px rgba(14, 165, 233, 0.12), inset 0 1px 0 rgba(255,255,255,0.08); }
+    .card.active { border-color: rgba(125, 211, 252, 0.85); background: linear-gradient(180deg, rgba(14,165,233,0.14), rgba(15,23,42,0.5)); box-shadow: 0 0 18px rgba(56, 189, 248, 0.18), inset 0 1px 0 rgba(255,255,255,0.08); }
+    .card-icon { height: 50px; background: rgba(125, 211, 252, 0.06); border: 1px solid rgba(125, 211, 252, 0.12); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 12px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.04); }
+    .card h3 { font-size: 14px; font-weight: 700; margin-bottom: 4px; color: #f8fafc; }
+    .card p { font-size: 12px; color: #bfdbfe; line-height: 1.4; margin-bottom: 12px; }
+    .btn-card { background: linear-gradient(135deg, rgba(56,189,248,0.28), rgba(59,130,246,0.14)); color: #e0f2fe; border: 1px solid rgba(125, 211, 252, 0.32); padding: 7px 14px; border-radius: 8px; font-weight: 600; font-size: 12px; text-align: center; }
+
+    .sim-box {
+      background: rgba(15, 23, 42, 0.62);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 20px; border: 1px solid rgba(148, 163, 184, 0.18); padding: 24px;
+      box-shadow: 0 24px 40px rgba(2, 6, 23, 0.35), inset 0 1px 0 rgba(255,255,255,0.05);
+      position: relative;
+    }
+    .sim-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .sim-title { font-size: 20px; font-weight: 700; color: #7dd3fc; text-shadow: 0 0 12px rgba(125, 211, 252, 0.35); }
+    .controls { display: flex; gap: 12px; }
+    .btn-act { padding: 10px 20px; border-radius: 12px; border: none; font-weight: 700; font-size: 13.5px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s ease; }
+    .btn-run { background: linear-gradient(135deg, #0284c7, #0ea5e9); color: white; box-shadow: 0 12px 24px rgba(14, 165, 233, 0.22); }
+    .btn-run:hover { background: linear-gradient(135deg, #0369a1, #0284c7); transform: translateY(-1px); }
+    .btn-rst { background: linear-gradient(135deg, #f97316, #ea580c); color: white; box-shadow: 0 12px 24px rgba(249, 115, 22, 0.22); }
+    .btn-rst:hover { background: linear-gradient(135deg, #ea580c, #c2410c); transform: translateY(-1px); }
+
+    .simulation-controls {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(150px, 1fr));
+      gap: 12px;
+      align-items: end;
+      margin-bottom: 18px;
+      padding: 14px;
+      border: 1px solid rgba(125, 211, 252, 0.2);
+      border-radius: 14px;
+      background: rgba(2, 8, 23, 0.42);
+    }
+    .simulation-control { display: grid; gap: 6px; min-width: 0; }
+    .simulation-control label { color: #bae6fd; font-size: 12px; font-weight: 700; }
+    .simulation-control select,
+    .simulation-control input { width: 100%; accent-color: #38bdf8; }
+    .simulation-control select {
+      min-height: 34px; padding: 6px 8px; border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 8px; background: #0f172a; color: #e2e8f0;
+    }
+    .control-value { color: #f8fafc; font-size: 12px; font-weight: 700; }
+    .control-group { display: grid; gap: 6px; min-width: 0; }
+    .control-group label { color: #bae6fd; font-size: 12px; font-weight: 700; }
+    .control-group select, .control-group input { width: 100%; accent-color: #38bdf8; }
+    .control-group select { min-height: 34px; padding: 6px 8px; border: 1px solid rgba(148, 163, 184, 0.35); border-radius: 8px; background: #0f172a; color: #e2e8f0; }
+    @media (max-width: 820px) {
+      .simulation-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 520px) {
+      .simulation-controls { grid-template-columns: 1fr; }
+    }
+
+    .canvas-wrapper {
+      width: 100%; min-height: 520px; height: 520px; border-radius: 18px; overflow: hidden;
+      border: 1px solid rgba(125, 211, 252, 0.22); background: #020817; position: relative;
+      box-shadow: inset 0 0 30px rgba(59, 130, 246, 0.18), 0 0 25px rgba(14, 165, 233, 0.08);
+    }
+    canvas { width: 100%; height: 100%; display: block; }
+
+    .legend-box {
+      display: flex; gap: 20px; flex-wrap: wrap; margin-top: 18px; padding: 14px 20px;
+      background: rgba(15, 23, 42, 0.54);
+      border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.18);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #dbeafe; }
+    .dot { width: 13px; height: 13px; border-radius: 50%; display: inline-block; box-shadow: 0 0 12px currentColor; }
+
+    .explanation-box {
+      margin-top: 14px; background: rgba(12, 26, 52, 0.72); padding: 18px 20px; border-radius: 12px;
+      border-left: 5px solid rgba(125, 211, 252, 0.9); font-size: 14px; color: #dbeafe; line-height: 1.6;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+    .explanation-title { font-weight: 700; font-size: 15px; margin-bottom: 6px; color: #7dd3fc; }
+    .quiz-box { margin-top: 24px; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 14px; padding: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.03); }
+    .quiz-title { font-size: 15px; font-weight: 700; color: #7dd3fc; margin-bottom: 16px; }
+    .question-card { background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(96, 165, 250, 0.18); border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.25s ease; }
+    .question-card:hover { background: rgba(15, 23, 42, 0.7); border-color: rgba(125, 211, 252, 0.4); transform: translateX(4px); }
+    .question-card.expanded { background: rgba(12, 26, 52, 0.8); border-color: rgba(125, 211, 252, 0.5); }
+    .q-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .q-text { font-size: 13px; font-weight: 600; color: #dbeafe; flex: 1; line-height: 1.5; }
+    .q-tag { display: inline-block; background: rgba(56, 189, 248, 0.15); color: #7dd3fc; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; margin-top: 4px; }
+    .q-toggle { font-size: 18px; transition: transform 0.25s ease; flex-shrink: 0; }
+    .question-card.expanded .q-toggle { transform: rotate(180deg); }
+    .a-content { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(96, 165, 250, 0.15); }
+    .question-card.expanded .a-content { display: block; }
+    .a-text { font-size: 13px; color: #cbd5e1; line-height: 1.6; font-family: monospace; }
+    .keyword { color: #38bdf8; font-weight: 700; }
+  </style>
+  <script src="../theme-manager.js" defer></script>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="nav-group nav-left">
+      <a href="../dashboard/index.html" class="nav-logo">🧪 DSE Chem Hub</a>
+      <a href="../dashboard/index.html" class="nav-item">Home</a>
+    </div>
+
+    <div class="nav-group nav-center">
+      <a href="../simulations/index.html" class="nav-item active">Simulations</a>
+      <a href="../ai-assistant/index.html" class="nav-item">AI Marking</a>
+      <a href="../qa-practice/index.html" class="nav-item">Quiz Generator</a>
+      <a href="../notes/index.html" class="nav-item">Notes</a>
+    </div>
+
+    <div class="nav-group nav-right">
+      <div class="settings-dropdown">
+        <button id="settingsBtn" class="settings-btn" type="button">⚙️ Settings</button>
+        <div id="settingsMenu" class="dropdown-content hidden">
+          <div class="theme-toggle"><span>Theme:</span><button id="lightThemeBtn" type="button" data-action="toggle-light">☀️ Light</button><button id="darkThemeBtn" type="button" data-action="toggle-dark">🌙 Dark</button></div>
+          <button id="helpBtn" class="dropdown-item" type="button" data-action="show-help">📚 Help & Support</button>
+          <button id="logoutBtn" class="dropdown-item danger" type="button" data-action="logout">🚪 Log Out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1 class="page-title">Lab Simulation Chamber</h1>
+    <p class="page-desc">Explore microscopic chemical mechanisms through interactive physics-based simulations.</p>
+
+    <div class="grid-container">
+      <div class="card active" onclick="switchSim('dissolution', this)">
+        <div>
+          <div class="card-icon">💧</div>
+          <h3>Dissolution &amp; Hydration</h3>
+          <p>Ion-dipole attraction breaking NaCl solid lattice.</p>
+        </div>
+        <div class="btn-card">▶️ Launch</div>
+      </div>
+
+      <div class="card" onclick="switchSim('crystallization', this)">
+        <div>
+          <div class="card-icon">❄️</div>
+          <h3>Crystallization</h3>
+          <p>Free ions locking into an ordered NaCl solid lattice.</p>
+        </div>
+        <div class="btn-card">▶️ Launch</div>
+      </div>
+
+      <div class="card" onclick="switchSim('addition', this)">
+        <div>
+          <div class="card-icon">🧪</div>
+          <h3>Addition Polymerization</h3>
+          <p>Opening C=C double bonds to build polyethene chain.</p>
+        </div>
+        <div class="btn-card">▶️ Launch</div>
+      </div>
+
+      <div class="card" onclick="switchSim('substitution', this)">
+        <div>
+          <div class="card-icon">⚡</div>
+          <h3>Free Radical Substitution</h3>
+          <p>UV light splitting Cl2 to initiate methane substitution.</p>
+        </div>
+        <div class="btn-card">▶️ Launch</div>
+      </div>
+    </div>
+
+    <div class="sim-box">
+      <div class="sim-header">
+        <div class="sim-title" id="simTitle">Dissolution &amp; Hydration Shells of NaCl</div>
+        <div class="controls">
+          <button class="btn-act btn-run" onclick="launchSim()">▶️ Launch Simulation</button>
+          <button class="btn-act btn-rst" onclick="resetSim()">🔄 Reset View</button>
+        </div>
+      </div>
+
+      <div id="controls-container" class="simulation-controls" aria-label="Simulation controls"></div>
+
+      <div class="canvas-wrapper">
+        <canvas id="canvas" width="1050" height="480"></canvas>
+      </div>
+
+      <div class="legend-box" id="legendBox"></div>
+      <div class="explanation-box" id="explanationBox"></div>
+      <div class="quiz-box" id="quizBox"></div>
+    </div>
+  </div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const canvasWrapper = canvas.closest('.canvas-wrapper');
+
+function resizeCanvas() {
+  const width = Math.max(1, Math.floor(canvasWrapper?.clientWidth || 1050));
+  const height = Math.max(1, Math.floor(canvasWrapper?.clientHeight || 480));
+
+  if (canvas.width === width && canvas.height === height) return;
+  canvas.width = width;
+  canvas.height = height;
+
+  if (typeof updateAndDraw === 'function') {
+    updateAndDraw();
+  }
+}
+
+window.addEventListener('resize', resizeCanvas);
+
+let currentMode = 'dissolution';
+let isRunning = false;
+let animationId = null;
+let objects = [];
+let step = 0;
+
+const CHEMICAL_DATABASE = {
+  SUBSTITUTION: {
+    alkanes: {
+      methane: { name: 'CH₄ (Methane)', formula: 'CH4', carbons: 1 },
+      ethane: { name: 'C₂H₆ (Ethane)', formula: 'C2H6', carbons: 2 },
+      propane: { name: 'C₃H₈ (Propane)', formula: 'C3H8', carbons: 3 }
+    },
+    halogens: {
+      Cl2: { name: 'Cl₂ (Chlorine)', element: 'Cl', color: '#22c55e', radius: 14 },
+      Br2: { name: 'Br₂ (Bromine)', element: 'Br', color: '#b91c1c', radius: 15 }
+    }
+  },
+  POLYMERIZATION: {
+    monomers: {
+      ethene: { name: 'Ethene', formula: 'C2H4', sideAtom: 'H', sideColor: '#f8fafc', sideRadius: 9 },
+      propene: { name: 'Propene', formula: 'C3H6', sideAtom: 'CH₃', sideColor: '#94a3b8', sideRadius: 11 },
+      'vinyl-chloride': { name: 'Vinyl chloride', formula: 'C2H3Cl', sideAtom: 'Cl', sideColor: '#22c55e', sideRadius: 12 },
+      styrene: { name: 'Styrene', formula: 'C8H8', sideAtom: 'Ph', sideColor: '#f59e0b', sideRadius: 13 },
+      tetrafluoroethene: { name: 'Tetrafluoroethene', formula: 'C2F4', sideAtom: 'F', sideColor: '#a855f7', sideRadius: 10 }
+    }
+  },
+  DISSOLUTION: {
+    salts: {
+      NaCl: { name: 'NaCl', cation: 'Na⁺', anion: 'Cl⁻', catColor: '#06b6d4', anColor: '#22c55e', soluble: true },
+      CaCl2: { name: 'CaCl₂', cation: 'Ca²⁺', anion: 'Cl⁻', catColor: '#f59e0b', anColor: '#22c55e', soluble: true },
+      NH4NO3: { name: 'NH₄NO₃', cation: 'NH₄⁺', anion: 'NO₃⁻', catColor: '#3b82f6', anColor: '#ef4444', soluble: true },
+      AgCl: { name: 'AgCl', cation: 'Ag⁺', anion: 'Cl⁻', catColor: '#94a3b8', anColor: '#22c55e', soluble: false }
+    }
+  },
+  CRYSTALLIZATION: {
+    solutes: {
+      CuSO4: { name: 'CuSO₄·5H₂O', cation: 'Cu²⁺', anion: 'SO₄²⁻', catColor: '#2563eb', anColor: '#64748b' },
+      KNO3: { name: 'KNO₃', cation: 'K⁺', anion: 'NO₃⁻', catColor: '#8b5cf6', anColor: '#ef4444' },
+      CH3COONa: { name: 'CH₃COONa', cation: 'Na⁺', anion: 'CH₃COO⁻', catColor: '#06b6d4', anColor: '#10b981' }
+    }
+  }
+};
+
+const simConfig = {
+  ratio: '4:1',
+  uvIntensity: 50,
+  temperature: 25,
+  speedMultiplier: 1,
+  solute: 'NaCl',
+  monomer: 'ethene',
+  alkane: 'methane',
+  halogen: 'Cl2',
+  saltAmount: 3,
+  stirSpeed: 1,
+  initiatorCount: 1
+};
+
+let controlElements = {};
+
+function getParticleSpeed(baseSpeed = 1) {
+  const reference = currentMode === 'substitution' ? 25 : 25;
+  const visualTemperature = currentMode === 'substitution'
+    ? Math.max(0.1, simConfig.temperature / reference)
+    : Math.max(0.1, simConfig.temperature / reference);
+  return baseSpeed * Math.min(4, visualTemperature) * simConfig.speedMultiplier;
+}
+
+function getRatioCounts(ratio) {
+  const counts = { '4:1': [4, 1], '1:1': [2, 2], '1:2': [1, 2], '1:4': [1, 4] };
+  return counts[ratio] || counts['4:1'];
+}
+
+function syncSimulationControls() {
+  simConfig.ratio = controlElements.ratio?.value || simConfig.ratio;
+  simConfig.uvIntensity = Number(controlElements.light?.value ?? simConfig.uvIntensity);
+  simConfig.temperature = Number(controlElements.temperature?.value ?? simConfig.temperature);
+  simConfig.speedMultiplier = Number(controlElements.speed?.value ?? simConfig.speedMultiplier);
+  if (controlElements.lightValue) controlElements.lightValue.textContent = `${simConfig.uvIntensity}%`;
+  if (controlElements.temperatureValue) controlElements.temperatureValue.textContent = `${simConfig.temperature}°C`;
+  if (controlElements.speedValue) controlElements.speedValue.textContent = `${simConfig.speedMultiplier}x`;
+  if (controlElements.saltValue && controlElements.saltAmount) controlElements.saltValue.textContent = `${controlElements.saltAmount.value} g`;
+  if (controlElements.stirringValue && controlElements.stirring) controlElements.stirringValue.textContent = `${controlElements.stirring.value}x`;
+  if (controlElements.monomerValue && controlElements.monomerCount) controlElements.monomerValue.textContent = controlElements.monomerCount.value;
+  if (controlElements.initiatorValue && controlElements.initiatorAmount) controlElements.initiatorValue.textContent = controlElements.initiatorAmount.value;
+  simConfig.saltAmount = Number(controlElements.saltAmount?.value ?? simConfig.saltAmount);
+  simConfig.stirSpeed = Number(controlElements.stirring?.value ?? simConfig.stirSpeed);
+  simConfig.initiatorCount = Number(controlElements.initiatorAmount?.value ?? simConfig.initiatorCount);
+  if (controlElements.solute) simConfig.solute = controlElements.solute.value;
+  if (controlElements.monomer) simConfig.monomer = controlElements.monomer.value;
+  if (controlElements.alkane) simConfig.alkane = controlElements.alkane.value;
+  if (controlElements.halogen) simConfig.halogen = controlElements.halogen.value;
+}
+
+function bindControlEvents() {
+  controlElements = {
+    ratio: document.getElementById('reactantRatio'),
+    light: document.getElementById('lightIntensity'),
+    temperature: document.getElementById('temperature'),
+    speed: document.getElementById('simSpeed'),
+    lightValue: document.getElementById('lightVal'),
+    temperatureValue: document.getElementById('tempVal'),
+    speedValue: document.getElementById('speedVal'),
+    saltAmount: document.getElementById('saltAmount'),
+    saltValue: document.getElementById('saltVal'),
+    stirring: document.getElementById('stirSpeed'),
+    stirringValue: document.getElementById('stirVal'),
+    monomerCount: document.getElementById('monomerCount'),
+    monomerValue: document.getElementById('monomerVal'),
+    initiatorAmount: document.getElementById('initiatorAmount'),
+    initiatorValue: document.getElementById('initVal'),
+    solute: document.getElementById('soluteSelect'),
+    monomer: document.getElementById('monomerSelect'),
+    alkane: document.getElementById('alkaneSelect'),
+    halogen: document.getElementById('halogenSelect')
+  };
+  controlElements.ratio?.addEventListener('change', () => { syncSimulationControls(); resetSim(); });
+  controlElements.light?.addEventListener('input', syncSimulationControls);
+  controlElements.temperature?.addEventListener('input', syncSimulationControls);
+  controlElements.speed?.addEventListener('input', syncSimulationControls);
+  controlElements.saltAmount?.addEventListener('input', () => { syncSimulationControls(); resetSim(); });
+  controlElements.stirring?.addEventListener('input', syncSimulationControls);
+  controlElements.monomerCount?.addEventListener('input', () => { syncSimulationControls(); resetSim(); });
+  controlElements.initiatorAmount?.addEventListener('input', () => { syncSimulationControls(); resetSim(); });
+  [controlElements.solute, controlElements.monomer, controlElements.alkane, controlElements.halogen].forEach((element) => element?.addEventListener('change', () => { syncSimulationControls(); resetSim(); }));
+  syncSimulationControls();
+}
+
+function updateControlPanel(mode) {
+  const container = document.getElementById('controls-container');
+  const panels = {
+    dissolution: `
+      <div class="control-group"><label for="soluteSelect">Ionic Compound</label><select id="soluteSelect"><option value="NaCl">NaCl</option><option value="CaCl2">CaCl₂</option><option value="NH4NO3">NH₄NO₃</option><option value="AgCl">AgCl</option></select></div>
+      <div class="control-group"><label for="saltAmount">Salt Amount</label><input id="saltAmount" type="range" min="1" max="10" value="3"><span id="saltVal" class="control-value">3 g</span></div>
+      <div class="control-group"><label for="temperature">Temperature (°C)</label><input id="temperature" type="range" min="0" max="100" value="25" step="5"><span id="tempVal" class="control-value">25°C</span></div>
+      <div class="control-group"><label for="stirSpeed">Stirring Speed</label><input id="stirSpeed" type="range" min="0" max="5" step="0.5" value="1"><span id="stirVal" class="control-value">1x</span></div>
+      <div class="control-group"><label for="simSpeed">Simulation Speed</label><input id="simSpeed" type="range" min="0.5" max="3" step="0.5" value="1"><span id="speedVal" class="control-value">1x</span></div>`,
+    crystallization: `
+      <div class="control-group"><label for="soluteSelect">Crystallizing Solute</label><select id="soluteSelect"><option value="CuSO4">CuSO₄·5H₂O</option><option value="KNO3">KNO₃</option><option value="CH3COONa">CH₃COONa</option></select></div>
+      <div class="control-group"><label for="temperature">Temperature (°C)</label><input id="temperature" type="range" min="0" max="100" value="25"><span id="tempVal" class="control-value">25°C</span></div>
+      <div class="control-group"><label for="saltAmount">Solute Amount</label><input id="saltAmount" type="range" min="1" max="10" value="3"><span id="saltVal" class="control-value">3 g</span></div>
+      <div class="control-group"><label for="stirSpeed">Cooling / Mixing</label><input id="stirSpeed" type="range" min="0" max="5" step="0.5" value="1"><span id="stirVal" class="control-value">1x</span></div>
+      <div class="control-group"><label for="simSpeed">Simulation Speed</label><input id="simSpeed" type="range" min="0.5" max="3" step="0.5" value="1"><span id="speedVal" class="control-value">1x</span></div>`,
+    addition: `
+      <div class="control-group"><label for="monomerSelect">Monomer</label><select id="monomerSelect"><option value="ethene">Ethene (CH₂=CH₂)</option><option value="propene">Propene</option><option value="vinyl-chloride">Vinyl chloride</option><option value="styrene">Styrene</option><option value="tetrafluoroethene">Tetrafluoroethene</option></select></div>
+      <div class="control-group"><label for="monomerCount">Monomers</label><input id="monomerCount" type="range" min="2" max="8" value="3"><span id="monomerVal" class="control-value">3</span></div>
+      <div class="control-group"><label for="initiatorAmount">Initiator (R•)</label><input id="initiatorAmount" type="range" min="1" max="5" value="1"><span id="initVal" class="control-value">1</span></div>
+      <div class="control-group"><label for="simSpeed">Simulation Speed</label><input id="simSpeed" type="range" min="0.5" max="3" step="0.5" value="1"><span id="speedVal" class="control-value">1x</span></div>`,
+    substitution: `
+      <div class="control-group"><label for="alkaneSelect">Alkane</label><select id="alkaneSelect"><option value="methane">Methane (CH₄)</option><option value="ethane">Ethane (C₂H₆)</option><option value="propane">Propane (C₃H₈)</option></select></div>
+      <div class="control-group"><label for="halogenSelect">Halogen</label><select id="halogenSelect"><option value="Cl2">Chlorine (Cl₂)</option><option value="Br2">Bromine (Br₂)</option></select></div>
+      <div class="control-group"><label for="reactantRatio">Molar Ratio (Alkane : Halogen)</label><select id="reactantRatio"><option value="4:1">4 : 1</option><option value="1:1">1 : 1</option><option value="1:2">1 : 2</option><option value="1:4">1 : 4</option></select></div>
+      <div class="control-group"><label for="lightIntensity">UV Light Intensity</label><input id="lightIntensity" type="range" min="0" max="100" value="50"><span id="lightVal" class="control-value">50%</span></div>
+      <div class="control-group"><label for="temperature">Temperature (°C)</label><input id="temperature" type="range" min="25" max="400" value="200" step="25"><span id="tempVal" class="control-value">200°C</span></div>
+      <div class="control-group"><label for="simSpeed">Simulation Speed</label><input id="simSpeed" type="range" min="0.5" max="3" step="0.5" value="1"><span id="speedVal" class="control-value">1x</span></div>`
+  };
+  if (container) container.innerHTML = panels[mode] || panels.dissolution;
+  bindControlEvents();
+}
+
+const PALETTE = {
+  Na: '#22d3ee',
+  Cl: '#34d399',
+  C:  '#94a3b8',
+  H:  '#f8fafc',
+  O:  '#f43f5e',
+  R:  '#f59e0b'
+};
+const DAMPING = 0.98;
+const lerp = (start, end, alpha) => start + (end - start) * alpha;
+
+function drawBackground() {
+  const t = performance.now() * 0.00055;
+  ctx.fillStyle = '#090d16';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.save();
+  ctx.strokeStyle = 'rgba(148, 163, 184, 0.10)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([1, 18]);
+  const gridSpacing = 38;
+  for (let x = 0; x < canvas.width; x += gridSpacing) {
+    ctx.beginPath();
+    ctx.moveTo(x + (t * 30) % gridSpacing, 0);
+    ctx.lineTo(x + (t * 30) % gridSpacing, canvas.height);
+    ctx.stroke();
+  }
+  for (let y = 0; y < canvas.height; y += gridSpacing) {
+    ctx.beginPath();
+    ctx.moveTo(0, y + (t * 18) % gridSpacing);
+    ctx.lineTo(canvas.width, y + (t * 18) % gridSpacing);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  for (let i = 0; i < 90; i++) {
+    const x = ((i * 97.13) + (t * 140)) % (canvas.width + 40) - 20;
+    const y = ((i * 63.71) + (t * 110 * (i % 2 === 0 ? 1 : 1.4))) % (canvas.height + 40) - 20;
+    const radius = 1 + ((i % 4) * 0.35);
+    const grad = ctx.createRadialGradient(x, y, 0, x, y, radius * 6);
+    grad.addColorStop(0, 'rgba(148, 163, 184, 0.15)');
+    grad.addColorStop(0.25, 'rgba(96, 165, 250, 0.18)');
+    grad.addColorStop(1, 'rgba(96, 165, 250, 0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(x, y, radius * 6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawModernBall(x, y, r, type, label = '') {
+  ctx.save();
+  const fill = PALETTE[type] || type;
+
+  ctx.shadowColor = fill;
+  ctx.shadowBlur = 12;
+  const outerGlow = ctx.createRadialGradient(x - r * 0.35, y - r * 0.35, r * 0.1, x, y, r * 1.7);
+  outerGlow.addColorStop(0, 'rgba(255,255,255,0.9)');
+  outerGlow.addColorStop(0.18, fill);
+  outerGlow.addColorStop(0.52, fill + 'dd');
+  outerGlow.addColorStop(1, 'rgba(15, 23, 42, 0.85)');
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fillStyle = outerGlow;
+  ctx.fill();
+
+  ctx.shadowBlur = 0;
+  const glass = ctx.createRadialGradient(x - r * 0.45, y - r * 0.45, r * 0.15, x, y, r);
+  glass.addColorStop(0, 'rgba(255,255,255,0.32)');
+  glass.addColorStop(0.22, fill);
+  glass.addColorStop(0.7, 'rgba(15, 23, 42, 0.2)');
+  glass.addColorStop(1, 'rgba(15, 23, 42, 0.7)');
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.92, 0, Math.PI * 2);
+  ctx.fillStyle = glass;
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(x - r * 0.28, y - r * 0.28, r * 0.2, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.fill();
+
+  if (label) {
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.font = '600 9px Consolas, "SF Pro Display", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, x, y + 1);
+  }
+  ctx.restore();
+}
+
+function drawBond(x1, y1, x2, y2, color = 'rgba(0, 220, 255, 0.4)', dashed = false, width = 1.6) {
+  ctx.save();
+  ctx.lineWidth = width;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = color;
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 10;
+  if (dashed) ctx.setLineDash([8, 8]);
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawDoubleBond(x1, y1, x2, y2, color = '#dbeafe') {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const length = Math.hypot(dx, dy) || 1;
+  const offsetX = (-dy / length) * 4;
+  const offsetY = (dx / length) * 4;
+  drawBond(x1 + offsetX, y1 + offsetY, x2 + offsetX, y2 + offsetY, color, false, 2.4);
+  drawBond(x1 - offsetX, y1 - offsetY, x2 - offsetX, y2 - offsetY, color, false, 2.4);
+}
+
+function drawH2O(x, y, angle) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+
+  const h1X = -28, h1Y = 24;
+  const h2X = 28, h2Y = 24;
+
+  drawBond(0, 0, h1X, h1Y, 'rgba(0, 220, 255, 0.38)', false, 1.5);
+  drawBond(0, 0, h2X, h2Y, 'rgba(0, 220, 255, 0.38)', false, 1.5);
+
+  drawModernBall(h1X, h1Y, 8, 'H', 'H');
+  drawModernBall(h2X, h2Y, 8, 'H', 'H');
+  drawModernBall(0, 0, 12, 'O', 'O');
+  ctx.restore();
+}
+
+function drawEtheneMonomer(cx, cy, scale = 1) {
+  const c1 = { x: cx - 30 * scale, y: cy };
+  const c2 = { x: cx + 30 * scale, y: cy };
+
+  drawDoubleBond(c1.x, c1.y, c2.x, c2.y, '#cbd5e1');
+  drawModernBall(c1.x, c1.y, 15 * scale, 'C', 'C');
+  drawModernBall(c2.x, c2.y, 15 * scale, 'C', 'C');
+
+  const hPositions = [
+    { x: c1.x - 24 * scale, y: c1.y - 28 * scale },
+    { x: c1.x - 24 * scale, y: c1.y + 28 * scale },
+    { x: c2.x + 24 * scale, y: c2.y - 28 * scale },
+    { x: c2.x + 24 * scale, y: c2.y + 28 * scale }
+  ];
+
+  const monomer = CHEMICAL_DATABASE.POLYMERIZATION.monomers[simConfig.monomer] || CHEMICAL_DATABASE.POLYMERIZATION.monomers.ethene;
+  hPositions.forEach((h, index) => {
+    const carbon = h.x < cx ? c1 : c2;
+    const substituent = getMonomerSubstituent(monomer, index);
+    drawBond(carbon.x, carbon.y, h.x, h.y, '#64748b', false, 1.6);
+    drawModernBall(h.x, h.y, substituent.radius * scale, substituent.color, substituent.label);
+  });
+}
+
+function getMonomerSubstituent(monomer, index) {
+  if (monomer.sideAtom === 'H') return { label: 'H', color: '#f8fafc', radius: 9 };
+  if (monomer.sideAtom === 'F') return { label: 'F', color: '#a855f7', radius: 10 };
+  if (monomer.sideAtom === 'Cl') return index === 2 ? { label: 'Cl', color: '#22c55e', radius: 12 } : { label: 'H', color: '#f8fafc', radius: 9 };
+  if (monomer.sideAtom === 'CH₃') return index === 3 ? { label: 'CH₃', color: '#94a3b8', radius: 11 } : { label: 'H', color: '#f8fafc', radius: 9 };
+  if (monomer.sideAtom === 'Ph') return index === 3 ? { label: 'Ph', color: '#f59e0b', radius: 13 } : { label: 'H', color: '#f8fafc', radius: 9 };
+  return { label: 'H', color: '#f8fafc', radius: 9 };
+}
+
+function drawPolyetheneUnit(cx, cy, scale = 1, bondAlpha = 1) {
+  const c1 = { x: cx - 30 * scale, y: cy };
+  const c2 = { x: cx + 30 * scale, y: cy };
+  ctx.save();
+  ctx.globalAlpha = bondAlpha;
+  drawBond(c1.x, c1.y, c2.x, c2.y, '#cbd5e1', false, 2.4);
+  ctx.restore();
+
+  const hPositions = [
+    { x: c1.x - 24 * scale, y: c1.y - 28 * scale },
+    { x: c1.x - 24 * scale, y: c1.y + 28 * scale },
+    { x: c2.x + 24 * scale, y: c2.y - 28 * scale },
+    { x: c2.x + 24 * scale, y: c2.y + 28 * scale }
+  ];
+
+  const monomer = CHEMICAL_DATABASE.POLYMERIZATION.monomers[simConfig.monomer] || CHEMICAL_DATABASE.POLYMERIZATION.monomers.ethene;
+  hPositions.forEach((h, index) => {
+    const carbon = h.x < cx ? c1 : c2;
+    const substituent = getMonomerSubstituent(monomer, index);
+    drawBond(carbon.x, carbon.y, h.x, h.y, '#64748b', false, 1.6);
+    drawModernBall(h.x, h.y, substituent.radius * scale, substituent.color, substituent.label);
+  });
+
+  drawModernBall(c1.x, c1.y, 15 * scale, 'C', 'C');
+  drawModernBall(c2.x, c2.y, 15 * scale, 'C', 'C');
+}
+
+function drawPolymerChain(monomers, progress) {
+  const activeMonomers = monomers.filter((monomer) => (monomer.progress || 0) > 0);
+  if (!activeMonomers.length) return;
+  const scale = 1.15;
+  const bondColor = `rgba(148, 163, 184, ${Math.max(0.2, progress)})`;
+
+  activeMonomers.forEach((monomer) => {
+    const bondProgress = monomer.progress || progress;
+    const c1 = { x: monomer.x - 30 * scale, y: monomer.y };
+    const c2 = { x: monomer.x + 30 * scale, y: monomer.y };
+    drawPolyetheneUnit(monomer.x, monomer.y, scale, bondProgress);
+
+    if (bondProgress < 1) {
+      ctx.save();
+      ctx.globalAlpha = 1 - bondProgress;
+      drawDoubleBond(c1.x, c1.y, c2.x, c2.y, '#f59e0b');
+      ctx.restore();
+    }
+  });
+
+  ctx.save();
+  ctx.globalAlpha = Math.max(0, progress);
+  activeMonomers.slice(0, -1).forEach((monomer, index) => {
+    const next = activeMonomers[index + 1];
+    const currentC2 = { x: monomer.x + 30 * scale, y: monomer.y };
+    const nextC1 = { x: next.x - 30 * scale, y: next.y };
+    drawBond(currentC2.x, currentC2.y, nextC1.x, nextC1.y, bondColor, false, 4);
+  });
+  const firstC1 = { x: activeMonomers[0].x - 30 * scale, y: activeMonomers[0].y };
+  const lastC2 = { x: activeMonomers[activeMonomers.length - 1].x + 30 * scale, y: activeMonomers[activeMonomers.length - 1].y };
+  drawBond(firstC1.x, firstC1.y, firstC1.x - 24, firstC1.y, bondColor, true, 2.5);
+  drawBond(lastC2.x, lastC2.y, lastC2.x + 24, lastC2.y, bondColor, true, 2.5);
+  ctx.restore();
+}
+
+function drawMethaneProjection(cx, cy, methane = null) {
+  const carbon = methane?.c || { x: cx, y: cy };
+  const hydrogens = methane?.h
+    ? methane.h.filter((hydrogen) => hydrogen.attached)
+    : [
+        { x: cx, y: cy - 54 },
+        { x: cx - 54, y: cy },
+        { x: cx + 54, y: cy },
+        { x: cx, y: cy + 54 }
+      ];
+
+  hydrogens.forEach((h) => {
+    drawBond(carbon.x, carbon.y, h.x, h.y, '#f8fafc', false, 2.4);
+    drawModernBall(h.x, h.y, 10, 'H', 'H');
+  });
+  drawModernBall(carbon.x, carbon.y, 18, 'C', 'C');
+  ctx.save();
+  ctx.fillStyle = '#f8fafc';
+  ctx.font = '600 13px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText(methane && hydrogens.length === 3 ? '•CH₃ (methyl radical)' : 'CH₄', carbon.x, carbon.y + 82);
+  ctx.restore();
+}
+
+function drawCl2Pair(x, y, halogen = CHEMICAL_DATABASE.SUBSTITUTION.halogens[simConfig.halogen] || CHEMICAL_DATABASE.SUBSTITUTION.halogens.Cl2) {
+  const leftX = x - 20;
+  const rightX = x + 20;
+  drawBond(leftX, y, rightX, y, halogen.color, false, 2.6);
+  drawModernBall(leftX, y, halogen.radius, halogen.color, halogen.element);
+  drawModernBall(rightX, y, halogen.radius, halogen.color, halogen.element);
+}
+
+function drawChloromethaneStructure(x, y, alpha = 1) {
+  const bondLength = 32;
+  const atoms = [
+    { x, y: y - bondLength, type: 'H', radius: 10, color: '#f8fafc', bond: '#94a3b8' },
+    { x: x - bondLength, y, type: 'H', radius: 10, color: '#f8fafc', bond: '#94a3b8' },
+    { x, y: y + bondLength, type: 'H', radius: 10, color: '#f8fafc', bond: '#94a3b8' },
+    { x: x + bondLength, y, type: 'Cl', radius: 14, color: '#22c55e', bond: '#4ade80' }
+  ];
+
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  atoms.forEach((atom) => {
+    drawBond(x, y, atom.x, atom.y, atom.bond, false, 2.6);
+    drawModernBall(atom.x, atom.y, atom.radius, atom.type, atom.type);
+  });
+  drawModernBall(x, y, 17, 'C', 'C');
+  ctx.fillStyle = '#f8fafc';
+  ctx.font = '600 13px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText('CH₃Cl', x, y + 68);
+  ctx.restore();
+}
+
+function applyBoundaryCollision(obj, r) {
+  let hitBoundary = false;
+
+  if (obj.x - r < 0) {
+    obj.x = r;
+    obj.vx = -Math.abs(obj.vx) * 0.5;
+    hitBoundary = true;
+  }
+  if (obj.x + r > canvas.width) {
+    obj.x = canvas.width - r;
+    obj.vx = Math.abs(obj.vx) * 0.5;
+    hitBoundary = true;
+  }
+  if (obj.y - r < 0) {
+    obj.y = r;
+    obj.vy = -Math.abs(obj.vy) * 0.5;
+    hitBoundary = true;
+  }
+  if (obj.y + r > canvas.height) {
+    obj.y = canvas.height - r;
+    obj.vy = Math.abs(obj.vy) * 0.5;
+    hitBoundary = true;
+  }
+
+  if (hitBoundary) {
+    obj.vx *= 0.92;
+    obj.vy *= 0.92;
+    if (Math.abs(obj.vx) < 0.03) obj.vx = 0;
+    if (Math.abs(obj.vy) < 0.03) obj.vy = 0;
+  }
+}
+
+function drawGlowPulse(x, y, radius, color = 'rgba(125, 211, 252, 0.35)') {
+  ctx.save();
+  const pulse = ctx.createRadialGradient(x, y, radius * 0.2, x, y, radius * 1.8);
+  pulse.addColorStop(0, color);
+  pulse.addColorStop(0.5, color.replace(/0\.\d+\)$/, '0.18)'));
+  pulse.addColorStop(1, 'rgba(14, 165, 233, 0)');
+  ctx.fillStyle = pulse;
+  ctx.beginPath();
+  ctx.arc(x, y, radius * 1.8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function initDissolution() {
+  objects = { lattice: [], waters: [] };
+  const salt = CHEMICAL_DATABASE.DISSOLUTION.salts[simConfig.solute] || CHEMICAL_DATABASE.DISSOLUTION.salts.NaCl;
+  const cx = canvas.width / 2, cy = canvas.height / 2, gap = 48;
+  const latticeRows = Math.min(5, Math.max(1, Math.ceil(simConfig.saltAmount / 2)));
+  const latticeCols = Math.min(5, Math.max(2, Math.ceil(simConfig.saltAmount / latticeRows)));
+  for (let r = 0; r < latticeRows; r++) {
+    for (let c = 0; c < latticeCols; c++) {
+      const latticeIndex = r * 3 + c;
+      const cationSite = simConfig.solute === 'CaCl2' ? latticeIndex % 3 === 0 : (r + c) % 2 === 0;
+      let type = cationSite ? 'Na' : 'Cl';
+      const baseX = cx + (c - 1) * gap;
+      const baseY = cy + (r - 1) * gap;
+      const shellProfile = type === 'Na'
+        ? { spreadRadius: 110, shellRadius: 42, slotCount: 6, looseness: 0.75, driftBias: 0.8 }
+        : { spreadRadius: 140, shellRadius: 58, slotCount: 8, looseness: 1.25, driftBias: 1.4 };
+      if (salt.soluble === false) {
+        shellProfile.spreadRadius = 0;
+        shellProfile.looseness = 0.2;
+      }
+      objects.lattice.push({
+        x: baseX,
+        y: baseY,
+        ox: baseX,
+        oy: baseY,
+        cx: cx,
+        cy: cy,
+        type,
+        label: type === 'Na' ? salt.cation : salt.anion,
+        color: type === 'Na' ? salt.catColor : salt.anColor,
+        isFree: false,
+        vx: 0,
+        vy: 0,
+        spreadAngle: ((r + c) * 1.7 + (type === 'Na' ? 0.8 : 0.2)),
+        spreadRadius: shellProfile.spreadRadius + ((r + c) % 3) * 22,
+        shellProfile
+      });
+    }
+  }
+  const ionAssignments = objects.lattice.map((ion, index) => {
+    const baseAngle = (index / objects.lattice.length) * Math.PI * 2;
+    const shellBase = ion.type === 'Na'
+      ? [
+          { angle: 0, radius: 36, z: 1.15 },
+          { angle: Math.PI / 2, radius: 36, z: 1.15 },
+          { angle: Math.PI, radius: 36, z: 1.15 },
+          { angle: (3 * Math.PI) / 2, radius: 36, z: 1.15 },
+          { angle: Math.PI / 4, radius: 46, z: 0.9 },
+          { angle: (3 * Math.PI) / 4, radius: 46, z: 0.9 },
+          { angle: (5 * Math.PI) / 4, radius: 46, z: 0.9 },
+          { angle: (7 * Math.PI) / 4, radius: 46, z: 0.9 }
+        ]
+      : [
+          { angle: 0, radius: 46, z: 1.25 },
+          { angle: Math.PI / 2, radius: 46, z: 1.25 },
+          { angle: Math.PI, radius: 46, z: 1.25 },
+          { angle: (3 * Math.PI) / 2, radius: 46, z: 1.25 },
+          { angle: Math.PI / 3, radius: 58, z: 1.0 },
+          { angle: (2 * Math.PI) / 3, radius: 58, z: 1.0 },
+          { angle: Math.PI, radius: 58, z: 1.0 },
+          { angle: (4 * Math.PI) / 3, radius: 58, z: 1.0 },
+          { angle: (5 * Math.PI) / 3, radius: 58, z: 1.0 },
+          { angle: (2 * Math.PI), radius: 58, z: 1.0 },
+          { angle: Math.PI / 6, radius: 70, z: 0.7 },
+          { angle: (5 * Math.PI) / 6, radius: 70, z: 0.7 }
+        ];
+    return {
+      ion,
+      waterSlots: shellBase.map((slot, slotIndex) => ({
+        angle: baseAngle + slot.angle + slotIndex * 0.11,
+        radius: slot.radius * ion.shellProfile.looseness,
+        z: slot.z
+      }))
+    };
+  });
+
+  const waterCount = 12 + simConfig.saltAmount * 6;
+  for (let i = 0; i < waterCount; i++) {
+    const ionGroup = ionAssignments[i % ionAssignments.length];
+    const slot = ionGroup.waterSlots[i % ionGroup.waterSlots.length];
+    const angle = slot.angle + Math.PI / 2;
+    const x = ionGroup.ion.x + Math.cos(slot.angle) * slot.radius;
+    const y = ionGroup.ion.y + Math.sin(slot.angle) * slot.radius;
+    objects.waters.push({
+      x,
+      y,
+      vx: 0,
+      vy: 0,
+      angle,
+      angularVelocity: 0,
+      target: ionGroup.ion,
+      targetX: x,
+      targetY: y,
+      basePhase: slot.angle,
+      driftPhase: i * 0.7,
+      isBound: true,
+      anchorIon: ionGroup.ion,
+      anchorRadius: slot.radius,
+      anchorAngle: slot.angle,
+      shellBias: slot.z,
+      freeDrift: { x: Math.cos(slot.angle + 1.2) * (ionGroup.ion.type === 'Na' ? 0.75 : 1.1), y: Math.sin(slot.angle + 2.4) * (ionGroup.ion.type === 'Na' ? 0.75 : 1.1) }
+    });
+  }
+  updateUI(
+    `Solvation of ${simConfig.solute} (離子-偶極引力與水合作用)`,
+    `Water molecules use <b>Ion-Dipole attraction</b> to hydrate ${simConfig.solute}. Temperature and stirring alter particle motion while the solvent forms hydration shells around the ions.`,
+    ` <div class="legend-item"><span class="dot" style="background:${salt.catColor}"></span> ${salt.cation}</div>
+      <div class="legend-item"><span class="dot" style="background:${salt.anColor}"></span> ${salt.anion}</div>
+      <div class="legend-item"><span class="dot" style="background:#e11d48"></span> Oxygen (δ-)</div>
+      <div class="legend-item"><span class="dot" style="background:#e2e8f0"></span> Hydrogen (δ+)</div>`
+  );
+}
+
+
+function initCrystallization() {
+  objects = [];
+  const solute = CHEMICAL_DATABASE.CRYSTALLIZATION.solutes[simConfig.solute] || CHEMICAL_DATABASE.CRYSTALLIZATION.solutes.CuSO4;
+  const cx = canvas.width / 2, cy = canvas.height / 2;
+  const gap = 52;
+  for (let r = 0; r < 5; r++) {
+    for (let c = 0; c < 5; c++) {
+      const type = (r + c) % 2 === 0 ? 'Na' : 'Cl';
+      const tx = cx + (c - 2) * gap;
+      const ty = cy + (r - 2) * gap;
+      const x = Math.random() * (canvas.width - 80) + 40;
+      const y = Math.random() * (canvas.height - 80) + 40;
+      objects.push({
+        x,
+        y,
+        tx,
+        ty,
+        type,
+        locked: false,
+        pulse: 0,
+        vx: (Math.random() - 0.5) * 6,
+        vy: (Math.random() - 0.5) * 6
+      });
+    }
+  }
+  updateUI(
+    `Crystallization of ${simConfig.solute} (結晶化與離子鍵形成)`,
+    `The ${simConfig.solute} solute starts in a disordered state. Cooling and mixing guide particles toward an ordered crystal lattice.`,
+    ` <div class="legend-item"><span class="dot" style="background:${solute.catColor}"></span> ${solute.cation}</div>
+      <div class="legend-item"><span class="dot" style="background:${solute.anColor}"></span> ${solute.anion}</div>`
+  );
+}
+
+function initAddition() {
+  const monomerCount = Number(controlElements.monomerCount?.value || 3);
+  objects = Array.from({ length: monomerCount }, (_, index) => ({
+    x: 120 + index * 150,
+    y: 220,
+    stage: 0,
+    progress: 0
+  }));
+  objects.push({ x: 60, y: 220, isInit: true });
+  objects.initiatorCount = simConfig.initiatorCount;
+  updateUI(
+    `Addition Polymerization of ${simConfig.monomer} (加成聚合反應物理機制)`,
+    `The radical initiator attacks the first ${simConfig.monomer} monomer, opens its C=C bond, and propagates through the selected monomer count to form a polymer chain.`,
+    ` <div class="legend-item"><span class="dot" style="background:#f59e0b"></span> Radical Initiator (R•)</div>
+      <div class="legend-item"><span class="dot" style="background:#94a3b8"></span> Carbon (C)</div>
+      <div class="legend-item"><span class="dot" style="background:#f8fafc"></span> Hydrogen (H)</div>`
+  );
+}
+
+function initSubstitution() {
+  step = 0;
+  // 徹底重置所有陣列和狀態（防止殘影）
+  if (objects && typeof objects === 'object') {
+    objects.clRadicals = [];
+    objects.hcl = null;
+    objects.methylRadical = null;
+    objects.chloromethane = null;
+    objects.newClRadical = null;
+    objects.terminationCl2 = null;
+  }
+  
+    objects = {
+      uvTimer: 0,
+      cl2Left: { x: 180, y: 170, split: false, flash: 0 },
+      cl2Right: { x: 760, y: 220, intact: false, visible: false, flash: 0 },
+      clRadicals: [], // 確保初始化為空陣列
+      methane: {
+        c: { x: 420, y: 220 },
+        h: [
+          { x: 420, y: 160, attached: true },
+          { x: 360, y: 220, attached: true },
+          { x: 420, y: 280, attached: true },
+          { x: 480, y: 220, attached: true }
+        ]
+      },
+      hcl: null,
+      methylRadical: null,
+      chloromethane: null,
+      newClRadical: null,
+      terminationCl2: null,
+      finalProduct: false,
+      chainEnded: false,
+      methanePool: getRatioCounts(simConfig.ratio)[0] - 1,
+      chlorinePool: getRatioCounts(simConfig.ratio)[1] - 1
+    };
+  updateUI(
+    `Free Radical Substitution: ${CHEMICAL_DATABASE.SUBSTITUTION.alkanes[simConfig.alkane]?.name || simConfig.alkane} + ${CHEMICAL_DATABASE.SUBSTITUTION.halogens[simConfig.halogen]?.name || simConfig.halogen} (自由基取代反應)`,
+    `UV light initiates homolytic fission of ${simConfig.halogen}. The resulting radical abstracts hydrogen from ${simConfig.alkane}; ratio, temperature, and light intensity control the observed reaction conditions.`,
+    ` <div class="legend-item"><span class="dot" style="background:#94a3b8"></span> Carbon (C)</div>
+      <div class="legend-item"><span class="dot" style="background:#f8fafc"></span> Hydrogen (H)</div>
+      <div class="legend-item"><span class="dot" style="background:${CHEMICAL_DATABASE.SUBSTITUTION.halogens[simConfig.halogen]?.color || '#34d399'}"></span> ${CHEMICAL_DATABASE.SUBSTITUTION.halogens[simConfig.halogen]?.element || 'Cl'} / ${CHEMICAL_DATABASE.SUBSTITUTION.halogens[simConfig.halogen]?.element || 'Cl'}•</div>
+      <div class="legend-item"><span class="dot" style="background:#f59e0b"></span> UV Rays</div>`
+  );
+}
+
+function updateUI(title, explanation, legend) {
+  document.getElementById('explanationBox').innerHTML = `<div class="explanation-title">💡 ${title}</div>${explanation}`;
+  document.getElementById('legendBox').innerHTML = legend;
+}
+
+function updateAndDraw() {
+  // 強制清空 Canvas（Hard Reset & Clear Frame）
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  drawBackground();
+
+  if (currentMode === 'dissolution') {
+    const thermalFactor = getParticleSpeed(1);
+    const time = performance.now() * 0.001 * thermalFactor;
+
+    const stirringFactor = 1 + simConfig.stirSpeed * 0.5;
+    const bulkFlowX = Math.cos(time * 0.75) * 1.6 * stirringFactor;
+    const bulkFlowY = Math.sin(time * 0.52) * 1.4 * stirringFactor;
+
+    objects.lattice.forEach((ion) => {
+      const spreadFactor = ion.type === 'Na' ? 0.7 : 1.2;
+      const targetX = ion.cx + Math.cos(ion.spreadAngle + time * 1.4) * ion.spreadRadius * spreadFactor;
+      const targetY = ion.cy + Math.sin(ion.spreadAngle * 0.9 + time * 1.2) * (ion.spreadRadius * 0.8 * spreadFactor);
+      ion.x += (targetX - ion.x) * (isRunning ? 0.07 : 0.03);
+      ion.y += (targetY - ion.y) * (isRunning ? 0.07 : 0.03);
+      ion.vx = 0;
+      ion.vy = 0;
+      applyBoundaryCollision(ion, ion.type === 'Na' ? 17 : 21);
+    });
+
+    objects.waters.forEach((w) => {
+      if (isRunning && w.anchorIon) {
+        const ion = w.anchorIon;
+        const shellAngle = w.anchorAngle + time * 0.7 + (ion.type === 'Cl' ? 0.4 : 0.1);
+        const shellRadius = w.anchorRadius + 10 + w.shellBias * 8 + Math.sin(time * 1.8 + w.basePhase) * (ion.type === 'Cl' ? 5.5 : 3.5);
+        const targetX = ion.x + Math.cos(shellAngle) * shellRadius;
+        const targetY = ion.y + Math.sin(shellAngle) * shellRadius;
+        const dx = targetX - w.x;
+        const dy = targetY - w.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const targetAngle = Math.atan2(ion.y - w.y, ion.x - w.x) + (ion.type === 'Na' ? -Math.PI / 2 : Math.PI / 2);
+
+        if (dist < 0.5) {
+          w.x = targetX;
+          w.y = targetY;
+          w.vx = 0;
+          w.vy = 0;
+        } else {
+          w.x += dx * 0.08;
+          w.y += dy * 0.08;
+        }
+
+        w.angle += (targetAngle - w.angle) * 0.08;
+        w.isBound = true;
+        w.target = ion;
+      } else {
+        w.isBound = false;
+        w.target = null;
+        const driftX = Math.sin(time * 1.6 + w.driftPhase) * 0.9 + w.freeDrift.x * 1.7 + bulkFlowX;
+        const driftY = Math.cos(time * 1.4 + w.driftPhase) * 0.8 + w.freeDrift.y * 1.7 + bulkFlowY;
+        w.x += driftX * thermalFactor * stirringFactor;
+        w.y += driftY * thermalFactor * stirringFactor;
+        w.angle += (Math.sin(time * 0.8 + w.driftPhase) - w.angle) * 0.08;
+      }
+
+      applyBoundaryCollision(w, 16);
+    });
+    
+    ctx.save();
+    objects.waters.sort((a, b) => a.y - b.y);
+    objects.waters.forEach(w => drawH2O(w.x, w.y, w.angle));
+    ctx.restore();
+    
+    objects.lattice.forEach(ion => {
+      drawModernBall(ion.x, ion.y, ion.type === 'Na' ? 17 : 21, ion.color || ion.type, ion.label || (ion.type === 'Na' ? 'Na+' : 'Cl-'));
+    });
+  } else if (currentMode === 'crystallization') {
+    objects.forEach(ion => {
+      if (!ion.locked) {
+        if (isRunning) {
+          let dx = ion.tx - ion.x, dy = ion.ty - ion.y, dist = Math.hypot(dx, dy) || 1;
+          const thermalFactor = getParticleSpeed(1);
+          ion.vx += (dx / dist) * 0.12 * thermalFactor;
+          ion.vy += (dy / dist) * 0.12 * thermalFactor;
+          ion.vx *= 0.94;
+          ion.vy *= 0.94;
+          ion.x += ion.vx * thermalFactor;
+          ion.y += ion.vy * thermalFactor;
+          if (dist < 9) {
+            ion.locked = true;
+            ion.x = ion.tx;
+            ion.y = ion.ty;
+            ion.vx = 0;
+            ion.vy = 0;
+            ion.pulse = 1;
+          }
+        } else {
+          ion.x += ion.vx;
+          ion.y += ion.vy;
+          ion.vx += (Math.random() - 0.5) * 0.9;
+          ion.vy += (Math.random() - 0.5) * 0.9;
+          if (ion.x < 18 || ion.x > canvas.width - 18) ion.vx *= -1;
+          if (ion.y < 18 || ion.y > canvas.height - 18) ion.vy *= -1;
+          ion.x = Math.min(Math.max(ion.x, 18), canvas.width - 18);
+          ion.y = Math.min(Math.max(ion.y, 18), canvas.height - 18);
+        }
+      }
+      if (ion.pulse > 0) {
+        ion.pulse *= 0.92;
+        drawGlowPulse(ion.x, ion.y, 22 + (1 - ion.pulse) * 18, ion.type === 'Na' ? 'rgba(96, 165, 250, 0.35)' : 'rgba(52, 211, 153, 0.35)');
+      }
+      drawModernBall(ion.x, ion.y, ion.type === 'Na' ? 17 : 21, ion.color || ion.type, ion.label || (ion.type === 'Na' ? 'Na+' : 'Cl-'));
+    });
+  } else if (currentMode === 'addition') {
+    let init = objects[objects.length - 1];
+    if (isRunning) {
+      const monomers = objects.slice(0, -1);
+      const chainStart = canvas.width / 2 - (monomers.length - 1) * 52.5;
+      objects.polymerTime = (objects.polymerTime || 0) + 0.018 * simConfig.speedMultiplier;
+      monomers.forEach((monomer, index) => {
+        const targetX = chainStart + index * 105;
+        monomer.x = lerp(monomer.x, targetX, 0.08);
+        const initiationSpacing = 0.72 + Math.max(0, simConfig.initiatorCount - 1) * 0.18;
+        monomer.progress = Math.min(1, Math.max(0, objects.polymerTime - index * initiationSpacing));
+        monomer.stage = monomer.progress >= 1 ? 2 : 1;
+      });
+      const nextIndex = monomers.findIndex(m => (m.progress || 0) < 1);
+      if (nextIndex !== -1) {
+        init.x += 2.8;
+      } else {
+        init.x += 1.2;
+      }
+      if (init.x > canvas.width - 80) init.x = canvas.width - 80;
+    }
+
+    for (let index = 0; index < simConfig.initiatorCount; index += 1) {
+      drawModernBall(init.x - index * 24, init.y - index * 18, 13, 'R', 'R•');
+    }
+    const monomers = objects.slice(0, -1);
+    monomers.forEach((monomer) => {
+      if ((monomer.progress || 0) === 0) drawEtheneMonomer(monomer.x, monomer.y, 1.15);
+    });
+    if (monomers.some(monomer => (monomer.progress || 0) > 0)) {
+      drawPolymerChain(monomers, Math.max(...monomers.map(monomer => monomer.progress || 0)));
+    }
+  } else if (currentMode === 'substitution') {
+    let s = objects;
+
+    // ===== INITIATION PHASE =====
+    // UV light splits Cl2 into 2 Cl• radicals
+    if (isRunning && step === 0) {
+      s.uvTimer += simConfig.speedMultiplier;
+
+      const cleavageDelay = simConfig.uvIntensity === 0
+        ? Infinity
+        : 30 / Math.max(0.2, simConfig.uvIntensity / 50);
+      if (s.uvTimer > cleavageDelay && !s.cl2Left.split) {
+        // 分裂 Cl2 Left，產生 2 個 Cl• 自由基
+        s.cl2Left.split = true;
+        s.clRadicals = [
+          { 
+            x: s.cl2Left.x - 18, 
+            y: s.cl2Left.y, 
+            vx: 2.8, 
+            vy: 0.7, 
+            type: 'Cl', 
+            radical: true,
+            id: 'radical_0' 
+          },
+          { 
+            x: s.cl2Left.x + 18, 
+            y: s.cl2Left.y, 
+            vx: -2.2, 
+            vy: -0.5, 
+            type: 'Cl', 
+            radical: true,
+            id: 'radical_1' 
+          }
+        ];
+        s.cl2Left.flash = 1;
+      }
+
+      // ===== PROPAGATION STEP 1 =====
+      // Cl• radical attacks CH4, removes H, forms HCl
+      if (s.clRadicals.length > 0) {
+        const clRadical = s.clRadicals[0];
+        const targetH = s.methane.h.find(h => h.attached);
+        
+        if (targetH) {
+          const dx = targetH.x - clRadical.x;
+          const dy = targetH.y - clRadical.y;
+          const dist = Math.hypot(dx, dy) || 1;
+          
+          if (dist > 18) {
+            // Cl• 移動朝向 H 原子
+            const movement = getParticleSpeed(3.3);
+            clRadical.x += (dx / dist) * movement;
+            clRadical.y += (dy / dist) * movement;
+          } else {
+            // 碰撞發生：H 被拉走，形成 HCl，CH4 變成 •CH3
+            targetH.attached = false;
+            targetH.vx = 1.7;
+            targetH.vy = -2.0;
+            s.hcl = {
+              cl: { x: clRadical.x, y: clRadical.y, vx: 2.0, vy: -2.4 },
+              h: targetH,
+              angle: 0,
+              type: 'HCl'
+            };
+            s.methylRadical = {
+              molecule: s.methane,
+              x: s.methane.c.x,
+              y: s.methane.c.y,
+              vx: 1.2,
+              vy: -0.9,
+              type: 'radical'
+            };
+            // 刪除第一個 Cl• radical 從陣列中（因為它已經用完了）
+            s.clRadicals.shift();
+            step = 1; // 進入 PROPAGATION STEP 2
+          }
+        }
+      }
+    }
+
+    // ===== PROPAGATION STEP 2 =====
+    // •CH3 attacks Cl2 right, forms CH3Cl
+    if (isRunning && step === 1) {
+      // HCl 繼續飛離
+      if (s.hcl) {
+        s.hcl.cl.x += s.hcl.cl.vx;
+        s.hcl.cl.y += s.hcl.cl.vy;
+        s.hcl.h.x += s.hcl.h.vx;
+        s.hcl.h.y += s.hcl.h.vy;
+        s.hcl.angle += 0.08;
+
+        // 邊界碰撞
+        s.hcl.cl.x = Math.min(Math.max(s.hcl.cl.x, 10), canvas.width - 10);
+        s.hcl.cl.y = Math.min(Math.max(s.hcl.cl.y, 10), canvas.height - 10);
+        s.hcl.h.x = Math.min(Math.max(s.hcl.h.x, 10), canvas.width - 10);
+        s.hcl.h.y = Math.min(Math.max(s.hcl.h.y, 10), canvas.height - 10);
+
+        if (s.hcl.cl.x <= 10 || s.hcl.cl.x >= canvas.width - 10) s.hcl.cl.vx *= -0.8;
+        if (s.hcl.cl.y <= 10 || s.hcl.cl.y >= canvas.height - 10) s.hcl.cl.vy *= -0.8;
+        if (s.hcl.h.x <= 10 || s.hcl.h.x >= canvas.width - 10) s.hcl.h.vx *= -0.8;
+        if (s.hcl.h.y <= 10 || s.hcl.h.y >= canvas.height - 10) s.hcl.h.vy *= -0.8;
+      }
+
+      // •CH3 移動朝向剩餘的第二個 Cl•，不生成新的 Cl2。
+      if (s.methylRadical) {
+        const remainingRadical = s.clRadicals[0];
+        const target = remainingRadical || { x: s.methylRadical.x + 80, y: s.methylRadical.y };
+        const dx = target.x - s.methylRadical.x;
+        const dy = target.y - s.methylRadical.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const movement = getParticleSpeed(2.3);
+        const moveX = (dx / dist) * movement;
+        const moveY = (dy / dist) * movement;
+        s.methylRadical.x += moveX;
+        s.methylRadical.y += moveY;
+        s.methylRadical.molecule.c.x += moveX;
+        s.methylRadical.molecule.c.y += moveY;
+        s.methylRadical.molecule.h.forEach((hydrogen) => {
+          if (hydrogen.attached) {
+            hydrogen.x += moveX;
+            hydrogen.y += moveY;
+          }
+        });
+        
+        if (remainingRadical && dist < 30) {
+          // 碰撞發生：剩餘的 Cl• 形成 C-Cl 鍵，不再產生新的氯原子。
+          step = 2;
+          s.chloromethane = { 
+            x: s.methylRadical.x, 
+            y: s.methylRadical.y, 
+            angle: 0,
+            type: 'CH3Cl'
+          };
+          s.clRadicals.shift();
+          s.newClRadical = null;
+          s.methylRadical = null;
+        }
+      }
+    }
+
+    // ===== TERMINATION PHASE (Optional) =====
+    // Two radicals combine to end the chain
+    if (isRunning && step === 2) {
+      if (s.newClRadical) {
+        s.newClRadical.x += s.newClRadical.vx;
+        s.newClRadical.y += s.newClRadical.vy;
+        applyBoundaryCollision(s.newClRadical, 15);
+      }
+
+      // 檢查剩餘的 Cl• radical 是否與新的 Cl• 相遇
+      if (s.clRadicals.length > 0) {
+        const otherCl = s.clRadicals[0];
+        if (s.newClRadical) {
+          const dx = s.newClRadical.x - otherCl.x;
+          const dy = s.newClRadical.y - otherCl.y;
+          const dist = Math.hypot(dx, dy) || 1;
+          otherCl.x += (dx / dist) * 1.5;
+          otherCl.y += (dy / dist) * 1.5;
+          if (dist < 20) {
+            // 終止反應：2 個 Cl• 結合形成 Cl2
+            step = 3;
+            s.chainEnded = true;
+            s.terminationCl2 = {
+              x: (s.newClRadical.x + otherCl.x) / 2,
+              y: (s.newClRadical.y + otherCl.y) / 2,
+              flash: 1,
+              type: 'Cl2'
+            };
+            // 清空陣列
+            s.clRadicals = [];
+            s.newClRadical = null;
+          }
+        }
+      }
+    }
+
+    // ===== RENDERING PHASE =====
+    // UV Light indication
+    if (s.uvTimer < 60) {
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(s.cl2Left.x, 20);
+      ctx.lineTo(s.cl2Left.x, s.cl2Left.y - 25);
+      ctx.stroke();
+      ctx.fillStyle = '#f59e0b';
+      ctx.font = 'bold 12px system-ui';
+      ctx.fillText('UV Light', s.cl2Left.x - 20, 15);
+    }
+
+    // Glow for Cl2 Left when split
+    if (s.cl2Left.flash > 0) {
+      s.cl2Left.flash *= 0.9;
+      drawGlowPulse(s.cl2Left.x, s.cl2Left.y, 28 + (1 - s.cl2Left.flash) * 20, 'rgba(245, 158, 11, 0.45)');
+    }
+
+    // 繪製 Cl2 Left（如果未分裂）
+    if (!s.cl2Left.split) {
+      drawCl2Pair(s.cl2Left.x, s.cl2Left.y);
+    }
+
+    // 產物生成後不再重複繪製舊的甲基自由基。
+    if (!s.chloromethane) {
+      drawMethaneProjection(s.methane.c.x, s.methane.c.y, s.methane);
+    }
+
+    if (s.methanePool) {
+      for (let index = 0; index < s.methanePool; index += 1) {
+        drawMethaneProjection(120 + (index % 3) * 170, 360 + Math.floor(index / 3) * 70);
+      }
+    }
+
+    if (s.chlorinePool) {
+      for (let index = 0; index < s.chlorinePool; index += 1) {
+        drawCl2Pair(150 + (index % 3) * 170, 90 + Math.floor(index / 3) * 65);
+      }
+    }
+
+    // 繪製 HCl 分子（如果存在）
+    if (s.hcl) {
+      const halogen = CHEMICAL_DATABASE.SUBSTITUTION.halogens[simConfig.halogen] || CHEMICAL_DATABASE.SUBSTITUTION.halogens.Cl2;
+      drawBond(s.hcl.cl.x, s.hcl.cl.y, s.hcl.h.x, s.hcl.h.y, halogen.color, false, 2.4);
+      drawModernBall(s.hcl.cl.x, s.hcl.cl.y, halogen.radius, halogen.color, halogen.element);
+      drawModernBall(s.hcl.h.x, s.hcl.h.y, 10, 'H', 'H');
+    }
+
+    // 繪製 CH3Cl 四面體產物（如果存在）
+    if (s.chloromethane) {
+      drawChloromethaneStructure(s.chloromethane.x, s.chloromethane.y);
+    }
+
+    // 繪製剩餘的 Cl• radicals
+    s.clRadicals.forEach((r) => {
+      const halogen = CHEMICAL_DATABASE.SUBSTITUTION.halogens[simConfig.halogen] || CHEMICAL_DATABASE.SUBSTITUTION.halogens.Cl2;
+      drawModernBall(r.x, r.y, halogen.radius, halogen.color, `${halogen.element}•`);
+    });
+
+    // 繪製新產生的 Cl• radical
+    if (s.newClRadical) {
+      drawModernBall(s.newClRadical.x, s.newClRadical.y, 14, 'Cl', 'Cl•');
+    }
+
+    // 繪製終止產物 Cl2（如果存在）
+    if (s.terminationCl2) {
+      drawCl2Pair(s.terminationCl2.x, s.terminationCl2.y);
+      drawGlowPulse(s.terminationCl2.x, s.terminationCl2.y, 24, 'rgba(52, 211, 153, 0.35)');
+    }
+  }
+
+  animationId = requestAnimationFrame(updateAndDraw);
+}
+
+
+
+
+const QUIZ_QUESTIONS = {
+  dissolution: [
+    {
+      q: "Describe the attractive forces established between water molecules and ions during hydration.",
+      tags: ["Structure & Bonding", "DSE Concept"],
+      a: "Ion-dipole forces are formed between the charged ions (\u003cspan class=\'keyword\'\u003eNa\u003csup\u003e+\u003c/sup\u003e or Cl\u003csup\u003e−\u003c/sup\u003e\u003c/span\u003e) and the \u003cspan class=\'keyword\'\u003epolar water molecules\u003c/span\u003e."
+    },
+    {
+      q: "Explain the orientation of water molecules around Na⁺ and Cl⁻ ions.",
+      tags: ["Chemical Structure", "DSE Concept"],
+      a: "\u003cspan class=\'keyword\'\u003eOxygen atoms (δ−)\u003c/span\u003e point toward \u003cspan class=\'keyword\'\u003eNa\u003csup\u003e+\u003c/sup\u003e\u003c/span\u003e, while \u003cspan class=\'keyword\'\u003ehydrogen atoms (δ+)\u003c/span\u003e point toward \u003cspan class=\'keyword\'\u003eCl\u003csup\u003e−\u003c/sup\u003e\u003c/span\u003e."
+    }
+  ],
+  crystallization: [
+    {
+      q: "Explain why solid NaCl does not conduct electricity, but molten NaCl does.",
+      tags: ["Ionic Bonding", "DSE Concept"],
+      a: "In solid NaCl, ions are \u003cspan class=\'keyword\'\u003efixed in lattice positions\u003c/span\u003e by strong ionic bonds and are not free to move. In molten state, the \u003cspan class=\'keyword\'\u003egiant ionic structure breaks down\u003c/span\u003e, and ions become \u003cspan class=\'keyword\'\u003emobile to carry electrical charges\u003c/span\u003e."
+    },
+    {
+      q: "State the coordination number of Na⁺ in a giant ionic lattice of NaCl.",
+      tags: ["Lattice Structure", "DSE Fact"],
+      a: "\u003cspan class=\'keyword\'\u003e6\u003c/span\u003e (each \u003cspan class=\'keyword\'\u003eNa\u003csup\u003e+\u003c/sup\u003e ion is surrounded by 6 Cl\u003csup\u003e−\u003c/sup\u003e ions\u003c/span\u003e)."
+    }
+  ],
+  addition: [
+    {
+      q: "State the change in carbon-carbon bond type during polymerization, and explain why it is an addition reaction.",
+      tags: ["Organic Chemistry", "Reactions"],
+      a: "The carbon-carbon \u003cspan class=\'keyword\'\u003edouble bond (C=C) breaks\u003c/span\u003e to form \u003cspan class=\'keyword\'\u003esingle bonds (C−C)\u003c/span\u003e between monomer units. It is an \u003cspan class=\'keyword\'\u003eaddition reaction\u003c/span\u003e because multiple monomer molecules join together to form a single polymer product without losing any atoms."
+    },
+    {
+      q: "Explain why polyethene cannot decolorize bromine water, whereas ethene can.",
+      tags: ["Saturated Hydrocarbons", "Reactions"],
+      a: "Polyethene is a \u003cspan class=\'keyword\'\u003esaturated hydrocarbon\u003c/span\u003e containing only \u003cspan class=\'keyword\'\u003ecarbon−carbon single bonds (C−C)\u003c/span\u003e, so it cannot undergo addition with bromine. Ethene contains an \u003cspan class=\'keyword\'\u003eunsaturated double bond (C=C)\u003c/span\u003e which reacts with bromine."
+    }
+  ],
+  substitution: [
+    {
+      q: "State the necessary condition for this reaction and write the equation for chain initiation.",
+      tags: ["Free Radical", "Mechanism"],
+      a: "Condition: \u003cspan class=\'keyword\'\u003eUltraviolet (UV) light / sunlight\u003c/span\u003e. Initiation: \u003cspan class=\'keyword\'\u003eCl₂ →[UV] 2Cl•\u003c/span\u003e"
+    },
+    {
+      q: "How can you experimentally test for the acidic gas (HCl) evolved?",
+      tags: ["Analytical", "Experimental"],
+      a: "Test the gas with \u003cspan class=\'keyword\'\u003emoist blue litmus paper\u003c/span\u003e, which \u003cspan class=\'keyword\'\u003eturns red\u003c/span\u003e; OR bring a glass rod dipped in \u003cspan class=\'keyword\'\u003econcentrated ammonia solution\u003c/span\u003e near the gas to form \u003cspan class=\'keyword\'\u003edense white fumes (NH₄Cl)\u003c/span\u003e."
+    }
+  ]
+};
+
+function renderQuizBox() {
+  const questions = QUIZ_QUESTIONS[currentMode] || [];
+  let html = '<div class="quiz-title">💡 HKDSE Experimental & Conceptual Questions</div>';
+  
+  questions.forEach((item, idx) => {
+    const tagsHtml = item.tags.map(t => '<span class="q-tag">' + t + '</span>').join('');
+    html += '<div class="question-card" onclick="toggleQuestion(this)">' +
+      '<div class="q-header">' +
+      '<div style="flex: 1;">' +
+      '<div class="q-text"><strong>Q' + (idx + 1) + ':</strong> ' + item.q + '</div>' +
+      '<div>' + tagsHtml + '</div>' +
+      '</div>' +
+      '<div class="q-toggle">▼</div>' +
+      '</div>' +
+      '<div class="a-content">' +
+      '<div class="a-text"><strong>Suggested Answer:</strong><br>' + item.a + '</div>' +
+      '</div>' +
+      '</div>';
+  });
+  
+  document.getElementById('quizBox').innerHTML = html;
+}
+
+function toggleQuestion(el) {
+  el.classList.toggle('expanded');
+}
+
+
+function switchSim(mode, cardEl) {
+  currentMode = mode;
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+  cardEl.classList.add('active');
+  const titles = {
+    dissolution: 'Dissolution & Hydration Shells of NaCl',
+    crystallization: 'Crystallization & Lattice Assembly',
+    addition: 'Addition Polymerization of Ethene',
+    substitution: 'Free Radical Substitution of Methane'
+  };
+  document.getElementById('simTitle').innerText = titles[mode];
+  updateControlPanel(mode);
+  renderQuizBox();
+  renderQuizBox();
+  resetSim();
+}
+
+function launchSim() { 
+  isRunning = true;
+  // 確保沒有殘留的舊物件
+  if (currentMode === 'substitution') {
+    objects.clRadicals = [];
+    objects.hcl = null;
+    objects.methylRadical = null;
+    objects.chloromethane = null;
+    objects.newClRadical = null;
+    objects.terminationCl2 = null;
+  }
+}
+function resetSim() {
+  isRunning = false;
+  if (animationId) cancelAnimationFrame(animationId);
+  
+  // 徹底清空所有狀態和陣列（防止物件重疊）
+  if (currentMode === 'dissolution') {
+    objects = { lattice: [], waters: [] };
+    initDissolution();
+  } else if (currentMode === 'crystallization') {
+    objects = [];
+    initCrystallization();
+  } else if (currentMode === 'addition') {
+    objects = [];
+    initAddition();
+  } else if (currentMode === 'substitution') {
+    objects = {};
+    step = 0;
+    initSubstitution();
+  }
+  
+  updateAndDraw();
+  renderQuizBox();
+  renderQuizBox();
+}
+
+resizeCanvas();
+updateControlPanel(currentMode);
+resetSim();
+</script>
+</body>
+</html>

@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personal Note Record</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    .report-underline {
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-decoration-color: #10b981;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <!-- Universal Header Navigation -->
+  <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 16px 24px; margin: 20px 24px 24px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; max-width: 100%;">
+          <!-- App Title / Brand -->
+          <a href="../dashboard/" style="text-decoration: none; color: #0f172a; font-weight: 700; font-size: 16px; display: flex; align-items: center; gap: 8px; margin: 0;">
+              <span>⚡</span> HKDSE Chem Lab
+          </a>
+
+          <!-- Action Controls -->
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+              <!-- User Greeting Pill -->
+              <span id="user-greeting" style="background: #eff6ff; color: #0f172a; border: none; padding: 10px 18px; border-radius: 999px; font-size: 14px; font-weight: 600;">
+                  Hi, Guest User
+              </span>
+
+              <!-- Navigation Buttons -->
+              <a href="../dashboard/" class="nav-pill" style="color: #475569; text-decoration: none; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; border: 1px solid #d1d5db; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;">
+                  🏠 Home
+              </a>
+              <a href="../qa-practice/" class="nav-pill" style="color: #475569; text-decoration: none; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; border: 1px solid #d1d5db; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;">
+                  ⚡ QA Practice
+              </a>
+              <a href="../ai-assistant/" class="nav-pill" style="color: #475569; text-decoration: none; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; border: 1px solid #d1d5db; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;">
+                  🎯 AI Marking
+              </a>
+              <a href="../knowledge-base/" class="nav-pill" style="color: #475569; text-decoration: none; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; border: 1px solid #d1d5db; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;">
+                  📚 Knowledge Base
+              </a>
+
+              <!-- Log Out Button -->
+              <button onclick="handleLogout()" style="color: #dc2626; background-color: transparent; text-decoration: none; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; border: 1px solid #fecaca; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;">
+                  🚪 Log Out
+              </button>
+          </div>
+      </div>
+  </div>
+
+  <div class="app-shell">
+
+    <section class="note-card">
+      <div class="page-header">
+        <div class="page-title">
+          <div class="eyebrow">Chemistry note archive</div>
+          <h2>Review saved chapters and part-based revision notes at a glance.</h2>
+        </div>
+      </div>
+
+      <div class="note-controls">
+        <label>
+          Chapter &amp; Topic
+          <select id="topicSelect" class="note-select"></select>
+        </label>
+        <label>
+          Part
+          <select id="partSelect" class="note-select"></select>
+        </label>
+      </div>
+
+      <div class="note-list" id="noteList"></div>
+    </section>
+  </div>
+
+  <script>
+    const noteList = document.getElementById('noteList');
+    const topicSelect = document.getElementById('topicSelect');
+    const partSelect = document.getElementById('partSelect');
+
+    const syllabusTopics = {
+      'Ch1-4 Planet Earth': [
+        'Part 0: Introduction to Chemistry',
+        'Part 1: Atmosphere',
+        'Part 2: Ocean',
+        'Part 3: Crust'
+      ],
+      'Ch5-9 Microscopic World I': [
+        'Part 1: Atomic Structure, Isotopes & Periodic Trends',
+        'Part 2: Chemical Bonding & Octet Rule',
+        'Part 3: Structures and Properties of Substances'
+      ],
+      'Ch10-13 Metals': [
+        'Part 1: Reactivity Series of Metals & Displacement',
+        'Part 2: Extraction Methods & Mole Calculations',
+        'Part 3: Corrosion of Metals & Protection Methods'
+      ],
+      'Ch14-19 Acids and Bases': [
+        'Part 1: Introduction to Acids, Alkalis & pH Scale',
+        'Part 2: Indicators, Neutralization & Salt Preparation',
+        'Part 3: Volumetric Analysis & Titration Stoichiometry'
+      ],
+      'Ch20-22 Fossil Fuels & Carbon Compounds': [
+        'Part 1: Sources of Hydrocarbons & Fractional Distillation',
+        'Part 2: Homologous Series, Alkanes & Alkenes',
+        'Part 3: Addition Polymers, Plastics & Pollution',
+        'Part 4 : Addition Polymerization'
+      ],
+      'Ch23-25 Microscopic World II': [
+        'Part 1: Shapes of Molecules & VSEPR Theory',
+        'Part 2: Bond Polarity & Electronegativity',
+        'Part 3: Intermolecular Forces & Hydrogen Bonding'
+      ],
+      'Ch26-29 Redox Reactions, Chemical Cells & Electrolysis': [
+        'Part 1: Oxidation Numbers & Balancing Redox Equations',
+        'Part 2: Chemical Cells & Electrochemical Series',
+        'Part 3: Electrolysis, Electroplating & Industrial Applications'
+      ],
+      'Ch30-32 Chemical Reactions & Energy': [
+        'Part 1: Exothermic & Endothermic Enthalpy Changes',
+        'Part 2: Calorimetry & Enthalpy Determination',
+        'Part 3: Hess\'s Law & Enthalpy Cycles'
+      ],
+      'Ch33-35 Rate of Reaction': [
+        'Part 1: Reaction Rate Monitoring Methods',
+        'Part 2: Factors Affecting Rate & Collision Theory',
+        'Part 3: Catalysts & Activation Energy'
+      ]
+    };
+
+    const topicOptions = ['All Chapters & Topics', ...Object.keys(syllabusTopics)];
+
+    const sampleNote = {
+      topic: 'Ch20-22 Fossil Fuels & Carbon Compounds',
+      part: 'Part 4 : Addition Polymerization',
+      query: 'Suggest why polystyrene does not have a constant relative molecular mass. (2 marks)',
+      babySteps: [
+        '❰ X ❱ (addition polymerisation) involves random chain termination.',
+        'Different polymer chains stop growing at different times, giving ❰ Y ❱ (different chain lengths).',
+        'Therefore the polymer has a range of relative molecular masses rather than one fixed value.'
+      ],
+      showFlat: [
+        'Explain why a sample of low-density polyethylene (LDPE) melts over a range of temperatures rather than at a sharp melting point. (2 marks)'
+      ],
+      showFact: ''
+    };
+
+    function loadNotes() {
+      const stored = JSON.parse(localStorage.getItem('dse-notes') || '[]');
+      if (!stored.length) return [sampleNote];
+      const sanitized = stored.map(note => sanitizeSavedNote(note));
+      return sanitized.length ? sanitized : [sampleNote];
+    }
+
+    function isPlaceholderField(value) {
+      return typeof value === 'string' && /unassigned/i.test(value.trim());
+    }
+
+    function sanitizeSavedNote(note) {
+      const normalized = {
+        ...note,
+        topic: isPlaceholderField(note.topic) ? '' : note.topic || '',
+        part: isPlaceholderField(note.part) ? '' : note.part || '',
+        query: note.query || note.question || note.body || ''
+      };
+
+      if (normalized.query.toLowerCase().includes('polystyrene')) {
+        return {
+          ...sampleNote,
+          _original: note
+        };
+      }
+      return normalized;
+    }
+
+    function extractHeading(value) {
+      if (!value) return '';
+      const match = value.match(/^(.*?)(?:\s*-\s*Part\s*\d[:]?.*)$/i);
+      return match ? match[1].trim() : value;
+    }
+
+    function extractPart(value) {
+      if (!value) return '';
+      const match = value.match(/(Part\s*\d[:]?.*)$/i);
+      return match ? match[1].trim() : '';
+    }
+
+    function normalizeNote(note, index) {
+      const resolved = {
+        ...note,
+        topic: note.topic || extractHeading(note.title) || '',
+        part: note.part || extractPart(note.title) || '',
+        query: note.query || note.question || note.body || ''
+      };
+      return {
+        _index: index,
+        topic: resolved.topic,
+        part: resolved.part,
+        query: resolved.query,
+        babySteps: Array.isArray(note.babySteps)
+          ? note.babySteps
+          : typeof note.babySteps === 'string'
+            ? note.babySteps.split('\n').map(line => line.trim()).filter(Boolean)
+            : [],
+        showFlat: Array.isArray(note.showFlat)
+          ? note.showFlat
+          : typeof note.showFlat === 'string'
+            ? note.showFlat.split('\n').map(line => line.trim()).filter(Boolean)
+            : [],
+        showFact: note.showFact || note.showFactText || ''
+      };
+    }
+
+    function saveNotes(notes) {
+      localStorage.setItem('dse-notes', JSON.stringify(notes));
+    }
+
+    function displayToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'toast-message';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      requestAnimationFrame(() => toast.classList.add('visible'));
+      setTimeout(() => {
+        toast.classList.remove('visible');
+        toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+      }, 2200);
+    }
+
+    function saveCard(index) {
+      const raw = loadNotes();
+      const note = raw[index];
+      const stored = JSON.parse(localStorage.getItem('dse-notes') || '[]');
+      if (stored.length === 0) {
+        stored.push(note);
+      } else {
+        stored[index] = note;
+      }
+      saveNotes(stored);
+      displayToast('Note saved successfully');
+      renderNoteCards();
+    }
+
+    function editCard(index) {
+      const raw = loadNotes();
+      const note = raw[index];
+      const query = window.prompt('Edit question', note.query || '');
+      if (query === null) return;
+      const babyStepsInput = window.prompt('Edit baby steps (one per line)', note.babySteps.join('\n'));
+      if (babyStepsInput === null) return;
+      const showFlatInput = window.prompt('Edit Show Flat text (one line per entry)', note.showFlat.join('\n'));
+      if (showFlatInput === null) return;
+      const showFact = window.prompt('Edit Show Fact', note.showFact || '');
+      if (showFact === null) return;
+      note.query = query.trim();
+      note.babySteps = babyStepsInput.split('\n').map(line => line.trim()).filter(Boolean);
+      note.showFlat = showFlatInput.split('\n').map(line => line.trim()).filter(Boolean);
+      note.showFact = showFact.trim();
+      const stored = JSON.parse(localStorage.getItem('dse-notes') || '[]');
+      stored[index] = note;
+      saveNotes(stored);
+      displayToast('Note edited and saved');
+      renderNoteCards();
+    }
+
+    function shareCard(index) {
+      const note = normalizeNote(loadNotes()[index], index);
+      const payload = [
+        `Topic: ${note.topic}`,
+        `Part: ${note.part}`,
+        `Question: ${note.query}`,
+        `Baby Steps:\n${note.babySteps.join('\n')}`,
+        `Show Flat:\n${note.showFlat.join('\n')}`,
+        note.showFact ? `Show Fact:\n${note.showFact}` : ''
+      ].filter(Boolean).join('\n\n');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(payload).then(() => {
+          displayToast('Note copied to clipboard');
+        }).catch(() => {
+          window.prompt('Copy this note content:', payload);
+        });
+      } else {
+        window.prompt('Copy this note content:', payload);
+      }
+    }
+
+    function populateTopicSelect() {
+      topicSelect.innerHTML = '';
+      topicOptions.forEach(topic => {
+        const option = document.createElement('option');
+        option.value = topic;
+        option.textContent = topic;
+        topicSelect.appendChild(option);
+      });
+    }
+
+    function populatePartSelect(topic) {
+      partSelect.innerHTML = '';
+      const defaultOption = document.createElement('option');
+      defaultOption.value = 'All Parts';
+      defaultOption.textContent = 'All Parts';
+      partSelect.appendChild(defaultOption);
+
+      if (topic === 'All Chapters & Topics') {
+        const allParts = Array.from(new Set(Object.values(syllabusTopics).flat())).sort();
+        allParts.forEach(part => {
+          const option = document.createElement('option');
+          option.value = part;
+          option.textContent = part;
+          partSelect.appendChild(option);
+        });
+        return;
+      }
+
+      const parts = syllabusTopics[topic] || [];
+      parts.forEach(part => {
+        const option = document.createElement('option');
+        option.value = part;
+        option.textContent = part;
+        partSelect.appendChild(option);
+      });
+    }
+
+    function shouldRender(note) {
+      const topicMatch = topicSelect.value === 'All Chapters & Topics' || note.topic === topicSelect.value;
+      const partMatch = partSelect.value === 'All Parts' || note.part === partSelect.value;
+      return topicMatch && partMatch;
+    }
+
+    function deleteNote(index) {
+      const notes = loadNotes();
+      notes.splice(index, 1);
+      localStorage.setItem('dse-notes', JSON.stringify(notes));
+      renderNoteCards();
+    }
+
+    function getAutoSavedNotes() {
+      const storageKeys = ["dse_chem_notes", "chemistry_notes", "dse_saved_notes"];
+      const merged = [];
+      storageKeys.forEach((key) => {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(key) || "[]");
+          if (Array.isArray(parsed)) merged.push(...parsed);
+        } catch (error) {
+          // ignore malformed storage entries
+        }
+      });
+      return Array.from(new Map(merged.map(note => [note.id || `${note.question}_${note.timestamp}`, note])).values());
+    }
+
+    function saveAutoSavedNotes(notes) {
+      const normalized = Array.isArray(notes) ? notes : [];
+      ["dse_chem_notes", "chemistry_notes", "dse_saved_notes"].forEach((key) => {
+        localStorage.setItem(key, JSON.stringify(normalized));
+      });
+    }
+
+    function deleteAutoSavedNote(noteId) {
+      let savedNotes = getAutoSavedNotes();
+      savedNotes = savedNotes.filter(note => note.id !== noteId);
+      saveAutoSavedNotes(savedNotes);
+      renderSavedNotes();
+    }
+
+    function formatReport(text) {
+      if (!text) return '';
+
+      return text
+        .replace(/&lt;(\/?)p&gt;/gi, '<$1p>')
+        .replace(/&lt;(\/?)ul&gt;/gi, '<$1ul>')
+        .replace(/&lt;(\/?)li&gt;/gi, '<$1li>')
+        .replace(/&lt;span style=&quot;color:\s*(green|red|#008000|#dc2626|#16a34a|#22c55e);?&quot;&gt;([\s\S]*?)&lt;\/span&gt;/gi, '<span style="color: $1;">$2</span>')
+        .replace(/&lt;strong style=&quot;color: #3b82f6;&quot;&gt;/gi, '<strong style="color: #3b82f6;">')
+        .replace(/&lt;(\/?)strong&gt;/gi, '<$1strong>')
+        .replace(/&lt;u&gt;([\s\S]*?)&lt;\/u&gt;/gi, '<span class="report-underline">$1</span>')
+        .replace(/text-decoration:\s*underline;?/gi, '')
+        .replace(/###\s*(.*)/g, '<h6 style="margin:16px 0 8px; color:#2563eb; font-weight:700;">$1</h6>')
+        .replace(/---/g, '<hr style="margin:14px 0; border:0; border-top:1px solid #e5e7eb;">')
+        .replace(/^\*\s*(.*)/gm, '• $1')
+        .replace(/\n/g, '<br>');
+    }
+
+    function renderSavedNotes() {
+      const notesContainer = document.getElementById("notes-list-container") || document.getElementById("noteList");
+      if (!notesContainer) return;
+
+      let savedNotes = [];
+      try {
+        savedNotes = getAutoSavedNotes();
+      } catch (error) {
+        savedNotes = [];
+      }
+
+      if (savedNotes.length === 0) {
+        notesContainer.innerHTML = `
+            <div style="text-align:center; color:#7f8c8d; padding:40px;">
+                <p>📭 目前沒有自動儲存的 AI 溫習紀錄。</p>
+            </div>`;
+        return;
+      }
+
+      notesContainer.innerHTML = savedNotes.map(note => {
+          const topicLabel = note.topic || note.chapter || "All Chapters & Topics";
+          const partLabel = note.part || "All Parts";
+          
+          // Parse AI response markdown to HTML if available
+          let aiResponseHtml = '';
+          const savedAiResponse = note.aiResponse || note.evaluation;
+          if (savedAiResponse) {
+            try {
+              // Use marked to parse markdown
+              if (typeof marked !== 'undefined') {
+                marked.setOptions({ breaks: true, gfm: true, headerIds: false });
+                aiResponseHtml = marked.parse(savedAiResponse);
+                
+                // Apply styling to HTML
+                aiResponseHtml = aiResponseHtml
+                  .replace(/<h2>🎯\s+(.+?)<\/h2>/g, '<div style="margin: 16px 0 8px; font-weight: bold; color: #2563eb; font-size: 18px;">🎯 $1</div>')
+                  .replace(/<h2>📊\s+(.+?)<\/h2>/g, '<div style="margin: 16px 0 8px; font-weight: bold; color: #2563eb; font-size: 18px;">📊 $1</div>')
+                  .replace(/<h2>🔍\s+(.+?)<\/h2>/g, '<div style="margin: 16px 0 8px; font-weight: bold; color: #2563eb; font-size: 18px;">🔍 $1</div>')
+                  .replace(/<h2>📝\s+(.+?)<\/h2>/g, '<div style="margin: 16px 0 8px; font-weight: bold; color: #2563eb; font-size: 18px;">📝 $1</div>')
+                  .replace(/<h2>💡\s+(.+?)<\/h2>/g, '<div style="margin: 16px 0 8px; font-weight: bold; color: #2563eb; font-size: 18px;">💡 $1</div>')
+                  .replace(/<ul>/g, '<ul style="margin: 8px 0; padding-left: 24px;">')
+                  .replace(/<li>/g, '<li style="margin: 6px 0; line-height: 1.6;">')
+                  .replace(/分數\s*:\s*(.+?)(?=<|$)/g, '<div style="background: #f0fdf4; padding: 12px 16px; border-radius: 8px; border-left: 4px solid #22c55e; margin-top: 16px; font-weight: 700; color: #166534;">分數 : $1</div>')
+                  .replace(/<p>/g, '<p style="margin: 8px 0; line-height: 1.6;">');
+              }
+            } catch (e) {
+              console.warn('Error parsing markdown:', e);
+              aiResponseHtml = `<p>${savedAiResponse.substring(0, 200)}...</p>`;
+            }
+          }
+          
+          return `
+          <div class="saved-note-card" style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:25px; margin-bottom:25px; box-shadow:0 4px 10px rgba(0,0,0,0.02); border-left:5px solid #27ae60;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #f1f5f9; padding-bottom:10px;">
+                  <div>
+                      <span style="background:#e8f8f0; color:#27ae60; padding:4px 10px; border-radius:6px; font-size:12px; font-weight:bold; margin-right:10px;">
+                          ${topicLabel}
+                      </span>
+                      <span style="background:#eef2ff; color:#4f46e5; padding:4px 10px; border-radius:6px; font-size:12px; font-weight:bold; margin-right:10px;">
+                          ${partLabel}
+                      </span>
+                      <span style="color:#7f8c8d; font-size:12px;">📅 ${note.timestamp}</span>
+                  </div>
+                  <button class="btn-action btn-delete" onclick="deleteAutoSavedNote('${note.id}')">🗑️ Delete Record</button>
+              </div>
+              
+              <div style="margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid #f1f5f9;">
+                <div style="margin-bottom:10px;"><strong style="color:#1e293b;">📝 Question:</strong></div>
+                <p style="margin:0 0 12px 0; color:#475569;">${note.question}</p>
+                
+                <div style="margin-bottom:10px;"><strong style="color:#1e293b;">✍️ Answer:</strong></div>
+                <p style="margin:0; color:#475569;">${note.answer}</p>
+              </div>
+              
+              <div class="note-content-body" style="font-size:15px; line-height:1.6;">
+                <div style="margin-bottom:10px;"><strong style="color:#1e293b;">🎯 AI Marking Report:</strong></div>
+                <div class="ai-feedback-body" style="background:#f9f9f9; padding:12px 16px; border-radius:8px; border-left:4px solid #27ae60;">
+                  ${aiResponseHtml || '<p style="color:#7f8c8d;">No AI feedback recorded.</p>'}
+                </div>
+              </div>
+          </div>
+      `;
+      }).join('');
+    }
+
+    function formatLineBlock(lines, withBullet = false) {
+      return lines
+        .map(line => line.trim())
+        .filter(Boolean)
+        .map(line => `${withBullet ? '• ' : ''}${line}`)
+        .join('<br>');
+    }
+
+    function renderNoteCards() {
+      const rawNotes = loadNotes();
+      const notes = rawNotes.map((note, idx) => normalizeNote(note, idx));
+      noteList.innerHTML = '';
+
+      const filtered = notes.filter(shouldRender);
+      if (!filtered.length) {
+        noteList.innerHTML = '<div class="saved-note-card"><p>No saved notes match the selected chapter and part.</p></div>';
+        return;
+      }
+
+      filtered.forEach(note => {
+        const card = document.createElement('div');
+        card.className = 'saved-note-card';
+        card.innerHTML = `
+          <div class="saved-note-card-header">
+            <div>
+              <div class="saved-note-card-title">${note.topic}</div>
+              <div class="note-card-meta">${note.part}</div>
+            </div>
+            <button class="delete-btn" data-index="${note._index}" aria-label="Delete note">🗑️ Delete</button>
+          </div>
+          <div class="saved-note-content">
+            <div class="saved-note-part">
+              <span class="note-badge">🏷️ ${note.topic}</span>
+            </div>
+            <div class="saved-note-part">
+              <span class="note-badge">📌 ${note.part}</span>
+            </div>
+            <div class="saved-note-part">
+              <span class="note-badge">🧩 Structure & Examples</span>
+              <p><strong>Question:</strong> ${note.query}</p>
+              ${note.materialSummary ? `<p><strong>📘 Material summary:</strong> ${note.materialSummary}</p>` : ''}
+              <p><strong>👣 Baby Steps:</strong><br>${formatLineBlock(note.babySteps, true)}</p>
+              <p><strong>🤟 Show Flat:</strong><br>${formatLineBlock(note.showFlat)}</p>
+              ${note.showFact ? `<p><strong>💡 Show Fact:</strong><br>${note.showFact}</p>` : ''}
+            </div>
+          </div>
+          <div class="saved-note-actions">
+            <button class="card-action-btn primary">💾 Save</button>
+            <button class="card-action-btn outline">✏️ Edit</button>
+            <button class="card-action-btn secondary">🔗 Share</button>
+          </div>
+        `;
+        noteList.appendChild(card);
+      });
+
+      noteList.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', (event) => {
+          deleteNote(parseInt(event.currentTarget.dataset.index, 10));
+        });
+      });
+
+      noteList.querySelectorAll('.card-action-btn').forEach(button => {
+        const index = parseInt(button.closest('.saved-note-card').querySelector('.delete-btn').dataset.index, 10);
+        if (button.classList.contains('primary')) {
+          button.addEventListener('click', () => saveCard(index));
+        }
+        if (button.classList.contains('outline')) {
+          button.addEventListener('click', () => editCard(index));
+        }
+        if (button.classList.contains('secondary')) {
+          button.addEventListener('click', () => shareCard(index));
+        }
+      });
+    }
+
+    topicSelect.addEventListener('change', () => {
+      populatePartSelect(topicSelect.value);
+      renderNoteCards();
+      renderSavedNotes();
+    });
+    partSelect.addEventListener('change', () => {
+      renderNoteCards();
+      renderSavedNotes();
+    });
+    window.addEventListener('storage', () => {
+      renderNoteCards();
+      renderSavedNotes();
+    });
+
+    populateTopicSelect();
+    populatePartSelect(topicSelect.value);
+    renderNoteCards();
+    renderSavedNotes();
+  </script>
+
+  <script src="../auth-nav.js"></script>
+</body>
+</html>

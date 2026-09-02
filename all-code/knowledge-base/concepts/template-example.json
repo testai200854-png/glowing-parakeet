@@ -1,0 +1,38 @@
+{
+  "topic": "Ch5-9 Microscopic World I",
+  "part": "Part 2: Chemical Bonding & Octet Rule",
+  "concepts": [
+    {
+      "id": "bonding-01",
+      "name": "Ionic Bonding",
+      "basicLevel": {
+        "definition": "Electrostatic attraction between oppositely charged ions formed by electron transfer",
+        "keyPoints": [
+          "Electrons transfer from metal to non-metal",
+          "Forms positive and negative ions",
+          "Occurs between metals and non-metals"
+        ],
+        "example": "NaCl: Na gives electron to Cl, forming Na+ and Cl−"
+      },
+      "intermediateLevel": {
+        "definition": "Strong electrostatic force holding together cations and anions in a crystal lattice",
+        "keyPoints": [
+          "Electron transfer from lower electronegativity to higher",
+          "Each ion surrounded by ions of opposite charge",
+          "Non-directional bonding",
+          "Three-dimensional crystalline structure"
+        ],
+        "example": "MgO: Mg(2+) and O(2−) in 1:1 ratio with rock salt structure"
+      },
+      "advancedLevel": {
+        "definition": "Coulombic force (F = kQ₁Q₂/r²) creating ordered arrays with coordination geometry",
+        "keyPoints": [
+          "Lattice enthalpy measures strength",
+          "Coordination number depends on ionic radius ratio",
+          "Affects melting point, solubility, and conductivity"
+        ],
+        "example": "NaCl has 6:6 coordination; CsCl has 8:8 coordination due to ion size"
+      }
+    }
+  ]
+}

@@ -1,0 +1,304 @@
+{
+  "default": {
+    "name": "general",
+    "babySteps": [
+      "• Identify the key chemistry idea in the question.",
+      "• Give a clear explanation using the relevant concept or evidence.",
+      "• Link the explanation back to the question and state the final answer."
+    ]
+  },
+  "part0_introToChemistry": {
+    "name": "Introduction to Chemistry",
+    "definitions": [
+      { "term": "Matter", "definition": "Anything that occupies space and has mass." },
+      { "term": "Pure substance", "definition": "A substance consisting of 1 kind of matter (element/compound) which cannot be broken down into simpler components by physical methods." },
+      { "term": "Mixture", "definition": "A substance consisting of 2 or more kinds of pure substances which can be broken down by physical or chemical methods." },
+      { "term": "Compound", "definition": "A pure substance formed by more than 1 kind of atoms which are chemically joined together." },
+      { "term": "Element", "definition": "A pure substance formed by only 1 kind of atom which cannot be broken down into simpler substances by chemical or physical methods." },
+      { "term": "Physical properties", "definition": "Properties observed without the substance changing into another substance." },
+      { "term": "Chemical properties", "definition": "Properties observed when a substance reacts with other substances to form a new substance with a different chemical identity." },
+      { "term": "Oxidizing hazard", "definition": "Substance that causes oxidation in another substance by accepting its electrons." },
+      { "term": "Flammable hazard", "definition": "Substance that can easily ignite and burn in the presence of an ignition source." },
+      { "term": "Explosive hazard", "definition": "Substance that undergoes rapid exothermic chemical decomposition when triggered by heat, shock, or friction, releasing large gas volume and pressure." },
+      { "term": "Corrosive hazard", "definition": "Substance that causes damage to other materials or living tissues upon contact." }
+    ],
+    "microscaleExperiments": {
+      "advantages": [
+        "Minimize the chemical hazards to the user.",
+        "Reduce the amount of chemicals used / chemical wastes produced.",
+        "Complete the experiment in a shorter period of time.",
+        "Save the cost of purchasing chemicals / treating chemical waste."
+      ]
+    },
+    "chemicalStorage": [
+      {
+        "container": "Brown Bottle",
+        "reason": "Prevent exposure to UV light which causes decomposition.",
+        "examples": [
+          { "substance": "Concentrated HNO3", "equation": "4HNO3 -> 4NO2 + 2H2O + O2" },
+          { "substance": "KMnO4", "equation": "4KMnO4 + 2H2O -> 4MnO2 + 4KOH + 3O2" },
+          { "substance": "Bromine water", "equation": "2Br2 + 2H2O -> 4HBr + O2" }
+        ]
+      },
+      {
+        "container": "Desiccator",
+        "reason": "Prevent reaction with moisture in the air.",
+        "examples": [
+          { "substance": "Anhydrous CoCl2 paper", "transition": "Blue (CoCl2) to Pink (CoCl2·6H2O)" },
+          { "substance": "Anhydrous CuSO4 powder", "transition": "White (CuSO4) to Blue (CuSO4·5H2O)" }
+        ]
+      },
+      {
+        "container": "Paraffin Oil",
+        "reason": "Prevent Group 1 metals from reacting with moisture and oxygen in air.",
+        "examples": [
+          { "substance": "Sodium (Na)", "equation": "2Na + 2H2O -> 2NaOH + H2" }
+        ]
+      }
+    ]
+  },
+  "part1_atmosphere": {
+    "name": "Atmosphere",
+    "definitions": [
+      { "term": "Fractional Distillation", "definition": "Separation technique used to separate a mixture of miscible liquids with different boiling points." },
+      { "term": "Purification", "definition": "Physical process that separates chemicals from a mixture into a pure substance." },
+      { "term": "Liquefaction", "definition": "Converting a gas into a liquid by increasing pressure or decreasing its temperature." },
+      { "term": "Sublimation", "definition": "Process in which a substance changes directly from solid to gaseous state without passing through liquid state." },
+      { "term": "Deposition", "definition": "Process in which a substance changes directly from gaseous to solid state without passing through liquid state." }
+    ],
+    "airComponents": [
+      { "gas": "Nitrogen (N2)", "type": "Element", "percentage": "78%", "function": "Food packaging / Refrigerant for living cells" },
+      { "gas": "Oxygen (O2)", "type": "Element", "percentage": "21%", "test": "Relights a glowing splint / Burning splint burns more vigorously" },
+      { "gas": "Argon (Ar)", "type": "Element", "percentage": "0.9%", "nature": "Unreactive noble gas" },
+      { "gas": "Carbon Dioxide (CO2)", "type": "Compound", "percentage": "0.038%", "test": "Turns limewater milky" },
+      { "gas": "Water Vapour (H2O)", "type": "Compound", "percentage": "Variable", "test": "Turns dry blue cobalt(II) chloride paper pink" }
+    ],
+    "qaPairs": [
+      {
+        "q": "Define liquefaction and state how it is achieved experimentally.",
+        "marks": 2,
+        "answer": "A physical process that converts a gaseous mixture into a liquid. Achieved by increasing the pressure or decreasing the temperature of the gas."
+      },
+      {
+        "q": "Explain why carbon dioxide and water vapour must be completely removed during purification before air undergoes liquefaction at -200°C.",
+        "marks": 2,
+        "answer": "At -80°C, carbon dioxide and water vapour solidify into solids. If not removed, these solids will block/clog the pipes and fractionating equipment during the liquefaction process at -200°C."
+      }
+    ]
+  },
+  "part2_ocean": {
+    "name": "Ocean",
+    "dissolutionPrinciple": {
+      "q": "Why is water a good solvent for NaCl?",
+      "marks": 2,
+      "markingPoints": [
+        "NaCl has a giant ionic lattice structure held by strong ionic bonds.",
+        "Water is a polar molecule with partial negative charge on oxygen and partial positive charge on hydrogen.",
+        "The energy released during hydration is sufficient to overcome the strong ionic bonds in the NaCl lattice."
+      ]
+    },
+    "crystallizationMethods": [
+      {
+        "method": "Evaporation to Dryness (NaCl Powder)",
+        "caution": "Do NOT heat to complete dryness as boiling can cause solute decomposition or spurting."
+      },
+      {
+        "method": "Crystallization (NaCl / CuSO4 Large Crystals)",
+        "steps": [
+          "Evaporate solution until saturated.",
+          "Allow saturated solution to cool down slowly to room temperature.",
+          "Filter and wash crystals with small amount of cold distilled water.",
+          "Dry crystals using filter paper."
+        ]
+      }
+    ],
+    "chlorAlkaliIndustry": {
+      "rawMaterial": "Brine (Concentrated Sodium Chloride Solution)",
+      "products": [
+        { "product": "Hydrogen gas (H2)", "pole": "Cathode (Negative)", "uses": "Making margarine, ammonia, rocket fuel" },
+        { "product": "Chlorine gas (Cl2)", "pole": "Anode (Positive)", "uses": "Making PVC, bleach, water sterilization" },
+        { "product": "Sodium Hydroxide (NaOH)", "pole": "Near Cathode", "uses": "Making soap, drain cleaner, neutralizing acidic effluents" }
+      ]
+    }
+  },
+  "part3_crust": {
+    "name": "Crust",
+    "rockAndMinerals": [
+      { "ore": "Bauxite", "majorCompound": "Aluminium oxide (Al2O3)", "metalExtracted": "Aluminium" },
+      { "ore": "Haematite", "majorCompound": "Iron(III) oxide (Fe2O3)", "metalExtracted": "Iron" },
+      { "ore": "Galena", "majorCompound": "Lead(II) sulphide (PbS)", "metalExtracted": "Lead" },
+      { "ore": "Copper Pyrite", "majorCompound": "Copper iron sulphide (CuFeS2)", "metalExtracted": "Copper" },
+      { "ore": "Rock Salt", "majorCompound": "Sodium chloride (NaCl)", "metalExtracted": "Sodium" }
+    ],
+    "sulphurDioxideReactions": {
+      "limewaterTest": {
+        "q": "When SO2 gas is bubbled into calcium hydroxide solution for a short period, state the expected observation and equation.",
+        "marks": 2,
+        "observation": "The limewater turns milky.",
+        "reason": "SO2 reacts with Ca(OH)2 to form an insoluble white precipitate CaSO3.",
+        "equation": "Ca(OH)2(aq) + SO2(g) -> CaSO3(s) + H2O(l)"
+      }
+    }
+  },
+  "part1_metalsAndOres": {
+    "name": "Metals and Their Ores",
+    "metallicBonding": {
+      "q": "Why do metals have high melting points and good electrical conductivity?",
+      "marks": 2,
+      "structure": "Giant metallic structure with strong non-directional electrostatic attraction between metal cations and delocalized electrons.",
+      "conductivity": "Delocalized electrons are free to move throughout the lattice to transfer charge/heat.",
+      "malleability": "Metal cations are packed in layers. When force is applied, layers slide over each other without breaking metallic bonds."
+    },
+    "extractionMethods": [
+      { "range": "K, Na, Ca, Mg, Al", "method": "Electrolysis of molten ore", "difficulty": "High cost / Difficult" },
+      { "range": "Zn, Fe, Pb, Cu", "method": "Carbon reduction (Heating with Carbon)", "difficulty": "Moderate" },
+      { "range": "Hg, Ag", "method": "Thermal decomposition (Heating alone)", "difficulty": "Easy" },
+      { "range": "Pt, Au", "method": "Physical separation", "difficulty": "Exist free in nature" }
+    ],
+    "qaPairs": [
+      {
+        "q": "Why is electrolysis of molten metal ores expensive?",
+        "marks": 2,
+        "answer": "1. Huge consumption of electricity for electrolysis.\n2. Huge consumption of fuel for heating to maintain molten state."
+      },
+      {
+        "q": "Why should molten state of ore be used instead of solid state?",
+        "marks": 1,
+        "answer": "Molten metal ores contain mobile ions which can conduct electricity, while solid state cannot."
+      },
+      {
+        "q": "Why remove copper(II) ions from wastewater before discharge?",
+        "marks": 2,
+        "answer": "1. To reduce the loss of copper metal.\n2. Copper(II) ions are toxic and cause water pollution."
+      }
+    ]
+  },
+  "part2_reactivitiesOfMetals": {
+    "name": "Reactivities of Metals",
+    "atomicRadiusExplanation": {
+      "q": "Why is Sodium (Na) more reactive than Magnesium (Mg)?",
+      "marks": 1,
+      "answer": "Sodium has a larger atomic radius than Magnesium, so it loses its outermost shell electron more readily."
+    },
+    "metalWaterReaction": {
+      "group1Observations": [
+        "Metal melts into a silvery ball and floats/moves rapidly on water surface.",
+        "Colourless gas bubbles (H2) evolved.",
+        "Hissing sound produced.",
+        "Solution turns pink when phenolphthalein is added (alkaline NaOH formed)."
+      ]
+    },
+    "metalAcidReaction": {
+      "pbSulfuricAcidAnomaly": {
+        "q": "Why does reaction between Lead (Pb) and dilute H2SO4 stop quickly?",
+        "marks": 2,
+        "answer": "Pb reacts with H2SO4 to form an insoluble layer of Lead(II) sulphate (PbSO4). This insoluble layer covers the metal surface and prevents further reaction."
+      }
+    },
+    "displacementReactions": {
+      "principle": "An atom of a more reactive metal loses electrons more readily to form cations. Cations of the less reactive metal accept electrons and deposit as metal atoms.",
+      "electrolyteRole": {
+        "q": "Why add NaCl before conducting displacement in water?",
+        "marks": 2,
+        "answer": "NaCl acts as an electrolyte providing mobile ions to improve electrical conductivity."
+      }
+    }
+  },
+  "part3_reactionMassAndMole": {
+    "name": "Reaction Mass & Mole Calculation",
+    "formulas": [
+      { "name": "Mole (n)", "formula": "n = Mass / Molar Mass (m / M)" },
+      { "name": "Percentage by Mass", "formula": "(RAM * Number of Atoms / Formula Mass) * 100%" },
+      { "name": "Percentage Yield", "formula": "(Experimental Yield / Theoretical Yield) * 100%" }
+    ],
+    "yieldDiscrepancies": {
+      "lowerExperimentalYield": [
+        "Incomplete reaction.",
+        "Loss of products during transfer or purification.",
+        "Side reactions occurring.",
+        "Impure reactants."
+      ],
+      "higherExperimentalYield": [
+        "Product is not completely dry (contains residual water).",
+        "Product contaminated with impurities or oxides."
+      ]
+    }
+  },
+  "part4_metalCorrosion": {
+    "name": "Metal Corrosion",
+    "definitions": [
+      { "term": "Corrosion", "definition": "Natural process where a refined metal degrades due to chemical reaction with environment." },
+      { "term": "Rusting", "definition": "Corrosion of iron to form hydrated iron(III) oxide (Fe2O3·xH2O)." },
+      { "term": "Corrosion resistance", "definition": "Ability of a material to resist degradation caused by chemical or electrochemical reactions." }
+    ],
+    "rustingEquation": "4Fe + 3O2 + 2xH2O -> 2Fe2O3·xH2O",
+    "rustTesting": {
+      "indicator": "Potassium hexacyanoferrate(III) solution + Rust indicator",
+      "positiveTest": "Turns deep blue in the presence of Fe2+ ions."
+    },
+    "protectionMethods": [
+      {
+        "method": "Anodization of Aluminium",
+        "principle": "Increasing oxide layer (Al2O3) thickness to enhance corrosion resistance and surface hardness.",
+        "uses": "Soft drink cans, window frames, cooking pots"
+      },
+      {
+        "method": "Sacrificial Protection",
+        "principle": "Attaching a more reactive metal (e.g., Zn or Mg) which corrodes preferentially by losing electrons.",
+        "uses": "Underground steel pipes, ship hulls"
+      },
+      {
+        "method": "Cathodic Protection",
+        "principle": "Supplying electrons continuously from an external DC source to prevent iron oxidation."
+      }
+    ]
+  },
+  "polymer": {
+    "name": "addition polymerisation",
+    "babySteps": [
+      "• ❰ X ❱ (addition polymerisation) involves random chain termination.",
+      "• Different polymer chains stop growing at different times, giving ❰ Y ❱ (different chain lengths).",
+      "• Therefore the polymer has a range of relative molecular masses rather than one fixed value."
+    ]
+  },
+  "acid": {
+    "name": "acids and bases",
+    "babySteps": [
+      "• State the acid or alkali concept involved.",
+      "• Explain how ions or particles behave in the reaction.",
+      "• Link the explanation to the expected observation or conclusion."
+    ]
+  },
+  "rate": {
+    "name": "rate of reaction",
+    "babySteps": [
+      "• Identify the factor affecting the rate of reaction.",
+      "• Explain why that factor changes the number of effective collisions.",
+      "• Conclude how the rate changes."
+    ]
+  },
+  "redox": {
+    "name": "redox",
+    "babySteps": [
+      "• Identify the species that is oxidised or reduced.",
+      "• State the change in oxidation number or electron transfer.",
+      "• Conclude the redox process clearly."
+    ]
+  },
+  "electrolysis": {
+    "name": "electrolysis",
+    "babySteps": [
+      "• Identify the electrode process at the anode or cathode.",
+      "• Explain the movement of ions or electrons.",
+      "• Conclude the product or observation."
+    ]
+  },
+  "bond": {
+    "name": "bonding and structure",
+    "babySteps": [
+      "• State the bonding or structure involved.",
+      "• Explain the property using the bonding or structure.",
+      "• Link the explanation to the question."
+    ]
+  }
+}
